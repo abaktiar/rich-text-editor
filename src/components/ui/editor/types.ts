@@ -1,0 +1,119 @@
+import type { Editor } from '@tiptap/react'
+import type { LucideIcon } from 'lucide-react'
+
+// Content format types
+export type EditorContentFormat = 'html' | 'json' | 'text'
+
+export interface EditorContent {
+  html?: string
+  json?: Record<string, unknown>
+  text?: string
+}
+
+// Slash command types
+export interface SlashCommand {
+  name: string
+  description: string
+  icon: LucideIcon
+  aliases?: string[]
+  group: SlashCommandGroup
+  action: (editor: Editor) => void
+}
+
+export type SlashCommandGroup = 
+  | 'basic'
+  | 'lists'
+  | 'media'
+  | 'advanced'
+  | 'custom'
+
+export interface SlashCommandGroupInfo {
+  id: SlashCommandGroup
+  label: string
+  priority: number
+}
+
+// Toolbar action types
+export interface ToolbarAction {
+  id: string
+  icon: LucideIcon
+  label: string
+  isActive?: (editor: Editor) => boolean
+  action: (editor: Editor) => void
+}
+
+// Plugin types
+export interface EditorPlugin {
+  name: string
+  slashCommands?: SlashCommand[]
+  toolbarActions?: ToolbarAction[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extensions?: any[]
+  onInit?: (editor: Editor) => void
+  onDestroy?: () => void
+}
+
+// Main editor props
+export interface RichTextEditorProps {
+  /** Initial content (HTML string or JSON) */
+  content?: string | Record<string, unknown>
+  /** Callback when content changes */
+  onChange?: (content: EditorContent) => void
+  /** Whether the editor is editable */
+  editable?: boolean
+  /** Placeholder text when editor is empty */
+  placeholder?: string
+  /** Enable autofocus on mount */
+  autoFocus?: boolean
+  /** Additional class names */
+  className?: string
+  /** Show the fixed toolbar at the top (defaults to true in edit mode) */
+  showToolbar?: boolean
+  /** Enable mentions (requires onMention callback) */
+  enableMentions?: boolean
+  /** Callback to search users for mentions */
+  onMention?: (query: string) => Promise<MentionItem[]>
+  /** Enable file uploads (requires onFileUpload callback) */
+  enableFileUpload?: boolean
+  /** Callback to handle file uploads */
+  onFileUpload?: (file: File) => Promise<string>
+  /** Custom plugins */
+  plugins?: EditorPlugin[]
+  /** Minimum height of the editor */
+  minHeight?: string | number
+}
+
+// Viewer props (lighter weight)
+export interface RichTextViewerProps {
+  /** Content to display (HTML string or JSON) */
+  content: string | Record<string, unknown>
+  /** Additional class names */
+  className?: string
+}
+
+// Mention types
+export interface MentionItem {
+  id: string
+  label: string
+  avatar?: string
+}
+
+// Editor ref for imperative handle
+export interface RichTextEditorRef {
+  getEditor: () => Editor | null
+  getContent: (format?: EditorContentFormat) => string | Record<string, unknown> | null
+  setContent: (content: string | Record<string, unknown>) => void
+  focus: () => void
+  blur: () => void
+  isEmpty: () => boolean
+  clear: () => void
+}
+
+// Command menu state
+export interface CommandMenuState {
+  isOpen: boolean
+  query: string
+  selectedIndex: number
+  items: SlashCommand[]
+  position: { top: number; left: number } | null
+}

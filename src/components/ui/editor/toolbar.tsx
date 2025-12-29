@@ -1,0 +1,274 @@
+import type { Editor } from '@tiptap/react'
+import {
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  CheckSquare,
+  Quote,
+  Minus,
+  Link,
+  Image,
+  Undo,
+  Redo,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Highlighter,
+  Type,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useCallback, useState } from 'react'
+
+interface ToolbarProps {
+  editor: Editor
+}
+
+interface ToolbarButtonProps {
+  icon: React.ReactNode
+  onClick: () => void
+  isActive?: boolean
+  disabled?: boolean
+  title: string
+}
+
+function ToolbarButton({ icon, onClick, isActive, disabled, title }: ToolbarButtonProps) {
+  return (
+    <button
+      className={cn(
+        'toolbar-button',
+        isActive && 'toolbar-button-active',
+        disabled && 'toolbar-button-disabled'
+      )}
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      type="button"
+    >
+      {icon}
+    </button>
+  )
+}
+
+function ToolbarDivider() {
+  return <div className="toolbar-divider" />
+}
+
+export function Toolbar({ editor }: ToolbarProps) {
+  const [showLinkInput, setShowLinkInput] = useState(false)
+  const [linkUrl, setLinkUrl] = useState('')
+
+  const setLink = useCallback(() => {
+    if (linkUrl) {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run()
+    }
+    setShowLinkInput(false)
+    setLinkUrl('')
+  }, [editor, linkUrl])
+
+  const addImage = useCallback(() => {
+    const url = window.prompt('Enter image URL:')
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run()
+    }
+  }, [editor])
+
+  if (!editor) {
+    return null
+  }
+
+  return (
+    <div className="toolbar">
+      {/* Undo/Redo */}
+      <ToolbarButton
+        icon={<Undo size={16} />}
+        onClick={() => editor.chain().focus().undo().run()}
+        disabled={!editor.can().undo()}
+        title="Undo (Cmd+Z)"
+      />
+      <ToolbarButton
+        icon={<Redo size={16} />}
+        onClick={() => editor.chain().focus().redo().run()}
+        disabled={!editor.can().redo()}
+        title="Redo (Cmd+Shift+Z)"
+      />
+
+      <ToolbarDivider />
+
+      {/* Text Styles */}
+      <ToolbarButton
+        icon={<Type size={16} />}
+        onClick={() => editor.chain().focus().setParagraph().run()}
+        isActive={editor.isActive('paragraph')}
+        title="Normal text"
+      />
+      <ToolbarButton
+        icon={<Heading1 size={16} />}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        isActive={editor.isActive('heading', { level: 1 })}
+        title="Heading 1"
+      />
+      <ToolbarButton
+        icon={<Heading2 size={16} />}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        isActive={editor.isActive('heading', { level: 2 })}
+        title="Heading 2"
+      />
+      <ToolbarButton
+        icon={<Heading3 size={16} />}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        isActive={editor.isActive('heading', { level: 3 })}
+        title="Heading 3"
+      />
+
+      <ToolbarDivider />
+
+      {/* Text Formatting */}
+      <ToolbarButton
+        icon={<Bold size={16} />}
+        onClick={() => editor.chain().focus().toggleBold().run()}
+        isActive={editor.isActive('bold')}
+        title="Bold (Cmd+B)"
+      />
+      <ToolbarButton
+        icon={<Italic size={16} />}
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+        isActive={editor.isActive('italic')}
+        title="Italic (Cmd+I)"
+      />
+      <ToolbarButton
+        icon={<UnderlineIcon size={16} />}
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
+        isActive={editor.isActive('underline')}
+        title="Underline (Cmd+U)"
+      />
+      <ToolbarButton
+        icon={<Strikethrough size={16} />}
+        onClick={() => editor.chain().focus().toggleStrike().run()}
+        isActive={editor.isActive('strike')}
+        title="Strikethrough"
+      />
+      <ToolbarButton
+        icon={<Code size={16} />}
+        onClick={() => editor.chain().focus().toggleCode().run()}
+        isActive={editor.isActive('code')}
+        title="Inline code"
+      />
+      <ToolbarButton
+        icon={<Highlighter size={16} />}
+        onClick={() => editor.chain().focus().toggleHighlight().run()}
+        isActive={editor.isActive('highlight')}
+        title="Highlight"
+      />
+
+      <ToolbarDivider />
+
+      {/* Alignment */}
+      <ToolbarButton
+        icon={<AlignLeft size={16} />}
+        onClick={() => editor.chain().focus().setTextAlign('left').run()}
+        isActive={editor.isActive({ textAlign: 'left' })}
+        title="Align left"
+      />
+      <ToolbarButton
+        icon={<AlignCenter size={16} />}
+        onClick={() => editor.chain().focus().setTextAlign('center').run()}
+        isActive={editor.isActive({ textAlign: 'center' })}
+        title="Align center"
+      />
+      <ToolbarButton
+        icon={<AlignRight size={16} />}
+        onClick={() => editor.chain().focus().setTextAlign('right').run()}
+        isActive={editor.isActive({ textAlign: 'right' })}
+        title="Align right"
+      />
+
+      <ToolbarDivider />
+
+      {/* Lists */}
+      <ToolbarButton
+        icon={<List size={16} />}
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        isActive={editor.isActive('bulletList')}
+        title="Bullet list"
+      />
+      <ToolbarButton
+        icon={<ListOrdered size={16} />}
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        isActive={editor.isActive('orderedList')}
+        title="Numbered list"
+      />
+      <ToolbarButton
+        icon={<CheckSquare size={16} />}
+        onClick={() => editor.chain().focus().toggleTaskList().run()}
+        isActive={editor.isActive('taskList')}
+        title="Task list"
+      />
+
+      <ToolbarDivider />
+
+      {/* Block Elements */}
+      <ToolbarButton
+        icon={<Quote size={16} />}
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        isActive={editor.isActive('blockquote')}
+        title="Quote"
+      />
+      <ToolbarButton
+        icon={<Minus size={16} />}
+        onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        title="Divider"
+      />
+
+      <ToolbarDivider />
+
+      {/* Link */}
+      {showLinkInput ? (
+        <div className="toolbar-link-input">
+          <input
+            type="url"
+            placeholder="Enter URL..."
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') setLink()
+              if (e.key === 'Escape') {
+                setShowLinkInput(false)
+                setLinkUrl('')
+              }
+            }}
+            autoFocus
+          />
+          <button onClick={setLink}>Add</button>
+          <button onClick={() => { setShowLinkInput(false); setLinkUrl('') }}>×</button>
+        </div>
+      ) : (
+        <ToolbarButton
+          icon={<Link size={16} />}
+          onClick={() => {
+            if (editor.isActive('link')) {
+              editor.chain().focus().unsetLink().run()
+            } else {
+              setShowLinkInput(true)
+            }
+          }}
+          isActive={editor.isActive('link')}
+          title="Add link"
+        />
+      )}
+
+      {/* Image */}
+      <ToolbarButton
+        icon={<Image size={16} />}
+        onClick={addImage}
+        title="Add image"
+      />
+    </div>
+  )
+}
