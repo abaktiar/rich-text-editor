@@ -218,13 +218,14 @@ function ImagePreview({ src, name, options }: ImagePreviewProps) {
   const backgroundClass = useMemo(() => {
     switch (opts.transparentBackground) {
       case 'checkerboard':
-        return 'bg-[length:20px_20px] bg-[linear-gradient(45deg,#ccc_25%,transparent_25%),linear-gradient(-45deg,#ccc_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#ccc_75%),linear-gradient(-45deg,transparent_75%,#ccc_75%)] bg-[position:0_0,0_10px,10px_-10px,-10px_0px]'
+        // Use CSS variables for dark/light mode compatibility
+        return 'bg-[length:20px_20px] bg-[linear-gradient(45deg,hsl(var(--muted))_25%,transparent_25%),linear-gradient(-45deg,hsl(var(--muted))_25%,transparent_25%),linear-gradient(45deg,transparent_75%,hsl(var(--muted))_75%),linear-gradient(-45deg,transparent_75%,hsl(var(--muted))_75%)] bg-[position:0_0,0_10px,10px_-10px,-10px_0px]'
       case 'white':
-        return 'bg-white'
+        return 'bg-background'
       case 'black':
-        return 'bg-black'
+        return 'bg-foreground'
       default:
-        return ''
+        return 'bg-background'
     }
   }, [opts.transparentBackground])
 
@@ -381,8 +382,8 @@ function TextPreview({ src, mimeType, onFetchFile, options }: TextPreviewProps) 
   return (
     <div className="h-full flex flex-col p-4">
       {isTruncated && (
-        <div className="mb-3 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-md text-sm text-amber-600 dark:text-amber-400">
-          <strong>Large file:</strong> Showing first {(content?.length || 0).toLocaleString()} of {originalSize.toLocaleString()} characters.
+        <div className="mb-3 px-3 py-2 bg-muted border border-border rounded-md text-sm text-muted-foreground">
+          <strong className="text-foreground">Large file:</strong> Showing first {(content?.length || 0).toLocaleString()} of {originalSize.toLocaleString()} characters.
           Download the file to view all content.
         </div>
       )}
@@ -574,17 +575,17 @@ function CsvPreview({ src, onFetchFile, options }: CsvPreviewProps) {
     <div className="h-full flex flex-col p-4">
       {/* Truncation warning */}
       {(isRowsTruncated || isColumnsTruncated) && (
-        <div className="mb-3 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-md text-sm text-amber-600 dark:text-amber-400">
-          <strong>Large file:</strong> Showing {displayedRows.toLocaleString()} of {(totalRows - (opts.headerRow ? 1 : 0)).toLocaleString()} rows
+        <div className="mb-3 px-3 py-2 bg-muted border border-border rounded-md text-sm text-muted-foreground">
+          <strong className="text-foreground">Large file:</strong> Showing {displayedRows.toLocaleString()} of {(totalRows - (opts.headerRow ? 1 : 0)).toLocaleString()} rows
           {isColumnsTruncated && `, ${displayedColumns} of ${totalColumns} columns`}.
           Download the file to view all data.
         </div>
       )}
 
       {/* Table */}
-      <div className="flex-1 overflow-auto border border-border rounded-lg">
+      <div className="flex-1 overflow-auto border border-border rounded-lg bg-background">
         <div className="min-w-max">
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full text-sm border-collapse bg-background">
             <thead className={cn("bg-muted", opts.freezeHeader && "sticky top-0 z-10")}>
               <tr>
                 {opts.showRowNumbers && (
@@ -791,7 +792,7 @@ export function FilePreviewDialog({
     <div className="fixed inset-0 z-[100]">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+        className="absolute inset-0 bg-foreground/80 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
       />
 
@@ -822,8 +823,8 @@ export function FilePreviewDialog({
 
         {/* Content */}
         <div className={cn(
-          "flex-1 overflow-hidden",
-          isImage && "bg-black/50"
+          "flex-1 overflow-hidden bg-background",
+          isImage && "bg-muted/50"
         )}>
           {renderPreview()}
         </div>

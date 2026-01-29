@@ -311,13 +311,9 @@
 
 /* Highlight */
 .tiptap mark {
-  background-color: #fef08a;
+  background-color: hsl(var(--primary) / 0.2);
   border-radius: 0.125rem;
   padding: 0.125rem 0;
-}
-
-.dark .tiptap mark {
-  background-color: #854d0e;
 }
 
 /* Selection */
@@ -339,7 +335,7 @@
   background-color: var(--popover);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px -10px hsl(var(--foreground) / 0.2);
   max-height: 320px;
   overflow-y: auto;
   min-width: 280px;
@@ -443,7 +439,7 @@
   background-color: var(--popover);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
-  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.15);
   padding: 0.25rem;
   animation: bubble-menu-appear 0.1s ease-out;
 }
@@ -578,7 +574,7 @@
   background-color: var(--popover);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px -10px hsl(var(--foreground) / 0.2);
   padding: 0.25rem;
 }
 
