@@ -25,9 +25,12 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useCallback, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import type { ToolbarAction } from './types'
 
 interface ToolbarProps {
   editor: Editor
+  pluginActions?: ToolbarAction[]
 }
 
 interface ToolbarButtonProps {
@@ -40,19 +43,20 @@ interface ToolbarButtonProps {
 
 function ToolbarButton({ icon, onClick, isActive, disabled, title }: ToolbarButtonProps) {
   return (
-    <button
-      className={cn(
-        'toolbar-button',
-        isActive && 'toolbar-button-active',
-        disabled && 'toolbar-button-disabled'
-      )}
+    <Button
+      variant={isActive ? 'default' : 'ghost'}
+      size="icon-sm"
       onClick={onClick}
       disabled={disabled}
       title={title}
       type="button"
+      className={cn(
+        isActive && 'bg-primary text-primary-foreground',
+        disabled && 'opacity-40 cursor-not-allowed'
+      )}
     >
       {icon}
-    </button>
+    </Button>
   )
 }
 
@@ -60,7 +64,7 @@ function ToolbarDivider() {
   return <div className="toolbar-divider" />
 }
 
-export function Toolbar({ editor }: ToolbarProps) {
+export function Toolbar({ editor, pluginActions = [] }: ToolbarProps) {
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
 
@@ -84,7 +88,7 @@ export function Toolbar({ editor }: ToolbarProps) {
   }
 
   return (
-    <div className="toolbar">
+    <div className="toolbar" data-slot="editor-toolbar">
       {/* Undo/Redo */}
       <ToolbarButton
         icon={<Undo size={16} />}
@@ -245,8 +249,8 @@ export function Toolbar({ editor }: ToolbarProps) {
             }}
             autoFocus
           />
-          <button onClick={setLink}>Add</button>
-          <button onClick={() => { setShowLinkInput(false); setLinkUrl('') }}>×</button>
+          <Button size="xs" onClick={setLink}>Add</Button>
+          <Button size="xs" variant="ghost" onClick={() => { setShowLinkInput(false); setLinkUrl('') }}>×</Button>
         </div>
       ) : (
         <ToolbarButton
@@ -269,6 +273,22 @@ export function Toolbar({ editor }: ToolbarProps) {
         onClick={addImage}
         title="Add image"
       />
+
+      {/* Plugin Actions */}
+      {pluginActions.length > 0 && (
+        <>
+          <ToolbarDivider />
+          {pluginActions.map((action) => (
+            <ToolbarButton
+              key={action.id}
+              icon={<action.icon size={16} />}
+              onClick={() => action.action(editor)}
+              isActive={action.isActive?.(editor)}
+              title={action.label}
+            />
+          ))}
+        </>
+      )}
     </div>
   )
 }

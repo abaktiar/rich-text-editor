@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import {
   RichTextEditor,
   RichTextViewer,
   type RichTextEditorRef,
   type EditorContent,
+  createFileUploadPlugin,
 } from '@/components/ui/editor'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -18,6 +19,7 @@ import {
   Blocks,
   Terminal,
   Zap,
+  Paperclip,
 } from 'lucide-react'
 
 // Demo content showcasing various features
@@ -62,6 +64,66 @@ export function EditorDemo() {
   const [content, setContent] = useState<EditorContent>({ html: demoContent })
   const editorRef = useRef<RichTextEditorRef>(null)
 
+  // Create file upload plugin with customizations
+  const fileUploadPlugin = useMemo(
+    () =>
+      createFileUploadPlugin({
+        onUpload: async (file) => {
+          // Demo: convert file to base64 data URL
+          // In production, you would upload to your server/CDN
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsDataURL(file);
+          });
+        },
+        accept: ['image/*', 'application/pdf', '.doc', '.docx', '.txt', '.md', '.csv', '.json'],
+        maxSize: 10 * 1024 * 1024, // 10MB
+
+        // Display mode by file type - images show as block by default
+        displayModeByType: {
+          'image/*': 'block',
+          'application/pdf': 'block',
+        },
+
+        // Preview customizations
+        previewOptions: {
+          csv: {
+            showRowNumbers: true,
+            alternateRowColors: true,
+            maxRows: 500,
+            delimiter: 'auto',
+          },
+          text: {
+            showLineNumbers: true,
+            fontSize: 13,
+          },
+          image: {
+            allowZoom: true,
+            showMetadata: true,
+            transparentBackground: 'checkerboard',
+          },
+        },
+
+        onUploadStart: (file) => {
+          console.log('Upload started:', file.name);
+        },
+        onUploadComplete: (file, url) => {
+          console.log('Upload complete:', file.name, url.substring(0, 50) + '...');
+        },
+        onUploadError: (file, error) => {
+          console.error('Upload failed:', file.name, error.message);
+        },
+        onFileDelete: (src, name, mimeType) => {
+          // Called when a file is removed from the editor
+          // Use this to delete the file from your server/CDN
+          console.log('File deleted:', name, mimeType, src.substring(0, 30) + '...');
+        },
+      }),
+    [],
+  );
+
   const toggleTheme = () => {
     setIsDark((prev) => !prev)
     document.documentElement.classList.toggle('dark')
@@ -89,6 +151,11 @@ export function EditorDemo() {
       description: 'Cmd+B, Cmd+I, Cmd+U, and many more',
     },
     {
+      icon: Paperclip,
+      title: 'File Attachments',
+      description: 'Inline or card view, full-screen preview, drag & drop support',
+    },
+    {
       icon: Sparkles,
       title: 'Plugin System',
       description: 'Extend with custom blocks, commands, and toolbars',
@@ -98,121 +165,159 @@ export function EditorDemo() {
       title: 'Developer Friendly',
       description: 'TypeScript, full API access, controlled & uncontrolled modes',
     },
-  ]
+  ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className='min-h-screen bg-background text-foreground'>
       {/* Header */}
-      <header className="border-b border-border sticky top-0 bg-background/80 backdrop-blur-sm z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Pencil className="w-4 h-4 text-primary-foreground" />
+      <header className='border-b border-border sticky top-0 bg-background/80 backdrop-blur-sm z-50'>
+        <div className='container mx-auto px-4 h-16 flex items-center justify-between'>
+          <div className='flex items-center gap-3'>
+            <div className='w-8 h-8 rounded-lg bg-primary flex items-center justify-center'>
+              <Pencil className='w-4 h-4 text-primary-foreground' />
             </div>
-            <span className="font-semibold text-lg">Rich Text Editor</span>
+            <span className='font-semibold text-lg'>Rich Text Editor</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              title={isDark ? 'Light mode' : 'Dark mode'}
-            >
-              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <div className='flex items-center gap-2'>
+            <Button variant='ghost' size='icon' onClick={toggleTheme} title={isDark ? 'Light mode' : 'Dark mode'}>
+              {isDark ? <Sun className='h-4 w-4' /> : <Moon className='h-4 w-4' />}
             </Button>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-          Notion-Style Rich Text Editor
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-          A beautiful, extensible editor component for React. Built with Tiptap,
-          styled with shadcn/ui, and designed for developers.
+      <section className='container mx-auto px-4 py-16 text-center'>
+        <h1 className='text-4xl sm:text-5xl font-bold mb-4'>Notion-Style Rich Text Editor</h1>
+        <p className='text-lg text-muted-foreground max-w-2xl mx-auto mb-8'>
+          A beautiful, extensible editor component for React. Built with Tiptap, styled with shadcn/ui, and designed for
+          developers.
         </p>
-        <div className="flex gap-4 justify-center">
-          <Button size="lg">
-            <Code className="mr-2 h-4 w-4" />
+        <div className='flex gap-4 justify-center'>
+          <Button size='lg'>
+            <Code className='mr-2 h-4 w-4' />
             View Source
           </Button>
-          <Button variant="outline" size="lg">
+          <Button variant='outline' size='lg'>
             Documentation
           </Button>
         </div>
       </section>
 
       {/* Features Grid */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+      <section className='container mx-auto px-4 py-8'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12'>
           {features.map((feature) => (
-            <Card key={feature.title} className="p-6">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                <feature.icon className="w-5 h-5 text-primary" />
+            <Card key={feature.title} className='p-6'>
+              <div className='w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4'>
+                <feature.icon className='w-5 h-5 text-primary' />
               </div>
-              <h3 className="font-semibold mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
+              <h3 className='font-semibold mb-2'>{feature.title}</h3>
+              <p className='text-sm text-muted-foreground'>{feature.description}</p>
             </Card>
           ))}
         </div>
       </section>
 
       {/* Editor Demo */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">Try it out</h2>
-          <div className="flex items-center gap-2">
-            <Button
-              variant={mode === 'edit' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setMode('edit')}
-            >
-              <Pencil className="mr-1.5 h-3.5 w-3.5" />
+      <section className='container mx-auto px-4 pb-16'>
+        <div className='flex items-center justify-between mb-4'>
+          <h2 className='text-2xl font-bold'>Try it out</h2>
+          <div className='flex items-center gap-2'>
+            <Button variant={mode === 'edit' ? 'default' : 'outline'} size='sm' onClick={() => setMode('edit')}>
+              <Pencil className='mr-1.5 h-3.5 w-3.5' />
               Edit
             </Button>
-            <Button
-              variant={mode === 'view' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setMode('view')}
-            >
-              <Eye className="mr-1.5 h-3.5 w-3.5" />
+            <Button variant={mode === 'view' ? 'default' : 'outline'} size='sm' onClick={() => setMode('view')}>
+              <Eye className='mr-1.5 h-3.5 w-3.5' />
               View
             </Button>
           </div>
         </div>
 
-          {mode === 'edit' ? (
-            <RichTextEditor
-              ref={editorRef}
-              content={content.html}
-              onChange={setContent}
-              placeholder="Type '/' for commands..."
-              minHeight="400px"
-              className="border-0"
-            />
-          ) : (
-            <Card className="overflow-hidden">
-              <RichTextViewer
-                content={content.html ?? ''}
-                className="border-0 min-h-[400px]"
-              />
-            </Card>
-          )}
+        {mode === 'edit' ? (
+          <RichTextEditor
+            ref={editorRef}
+            content={content.html}
+            onChange={setContent}
+            placeholder="Type '/' for commands..."
+            minHeight='400px'
+            className='border-0'
+            plugins={[fileUploadPlugin]}
+          />
+        ) : (
+          <Card className='overflow-hidden'>
+            <RichTextViewer content={content.html ?? ''} className='border-0 min-h-[400px]' />
+          </Card>
+        )}
 
-        <p className="text-sm text-muted-foreground mt-4 text-center">
-          💡 Tip: Try typing "/" to see slash commands, or select text to format it
+        <p className='text-sm text-muted-foreground mt-4 text-center'>
+          Tip: Type "/file" for inline attachment or "/filecard" for card view. Click any file to preview. Supports
+          images, PDFs, CSV, and text files.
         </p>
       </section>
 
       {/* Usage Example */}
-      <section className="container mx-auto px-4 pb-16">
-        <h2 className="text-2xl font-bold mb-4">Quick Start</h2>
-        <Card className="p-6 overflow-x-auto">
-          <pre className="text-sm">
-            <code>{`import { RichTextEditor } from '@/components/ui/editor'
+      <section className='container mx-auto px-4 pb-16'>
+        <h2 className='text-2xl font-bold mb-4'>Quick Start</h2>
+        <Card className='p-6 overflow-x-auto'>
+          <pre className='text-sm'>
+            <code>{`import { RichTextEditor, createFileUploadPlugin } from '@/components/ui/editor'
+
+// Create file upload plugin with customizations
+const fileUploadPlugin = createFileUploadPlugin({
+  onUpload: async (file) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch('/api/upload', { method: 'POST', body: formData })
+    return (await res.json()).url
+  },
+  accept: ['image/*', 'application/pdf', '.csv', '.json'],
+  maxSize: 10 * 1024 * 1024,
+
+  // Display mode by file type
+  displayModeByType: {
+    'image/*': 'block',      // Images show as block
+    'application/pdf': 'block',
+    'text/*': 'inline',      // Text files show inline
+  },
+
+  // Preview customizations
+  previewOptions: {
+    csv: {
+      showRowNumbers: true,  // Show row numbers
+      maxRows: 1000,         // Limit for performance
+      delimiter: 'auto',     // Auto-detect delimiter
+      alternateRowColors: true,
+      highlightColumns: ['Status', 'Priority'], // Highlight specific columns
+    },
+    text: {
+      showLineNumbers: true,
+      fontSize: 13,
+      wordWrap: true,
+    },
+    image: {
+      allowZoom: true,
+      showMetadata: true,
+      transparentBackground: 'checkerboard',
+    },
+  },
+
+  // Custom file fetcher for authenticated content
+  onFetchFile: async (src, mimeType) => {
+    const res = await fetch(src, { headers: { Authorization: 'Bearer token' }})
+    return res.text()
+  },
+
+  // Cleanup when files are deleted
+  onFileDelete: async (src, name, mimeType) => {
+    await fetch('/api/files/delete', {
+      method: 'DELETE',
+      body: JSON.stringify({ url: src }),
+    })
+  },
+})
 
 function MyPage() {
   const [content, setContent] = useState('')
@@ -222,6 +327,7 @@ function MyPage() {
       content={content}
       onChange={(c) => setContent(c.html ?? '')}
       placeholder="Start writing..."
+      plugins={[fileUploadPlugin]}
     />
   )
 }
@@ -236,11 +342,11 @@ function MyPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+      <footer className='border-t border-border py-8'>
+        <div className='container mx-auto px-4 text-center text-sm text-muted-foreground'>
           Built with Tiptap + React + shadcn/ui
         </div>
       </footer>
     </div>
-  )
+  );
 }

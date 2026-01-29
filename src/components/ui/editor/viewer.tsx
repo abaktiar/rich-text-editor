@@ -1,5 +1,6 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import { createExtensions } from './extensions'
+import { FileAttachment } from './extensions/file-attachment'
 import type { RichTextViewerProps } from './types'
 import { cn } from '@/lib/utils'
 import './editor.css'
@@ -10,7 +11,10 @@ import './editor.css'
  */
 export function RichTextViewer({ content, className }: RichTextViewerProps) {
   const editor = useEditor({
-    extensions: createExtensions(),
+    extensions: [
+      ...createExtensions(),
+      FileAttachment, // Include file attachment support for viewing
+    ],
     content: typeof content === 'string' ? content : content,
     editable: false,
   })

@@ -47,6 +47,9 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     // Collect extensions from plugins
     const pluginExtensions = plugins.flatMap((p) => p.extensions ?? [])
 
+    // Collect toolbar actions from plugins
+    const pluginToolbarActions = plugins.flatMap((p) => p.toolbarActions ?? [])
+
     const editor = useEditor({
       extensions: [
         ...createExtensions({ placeholder }),
@@ -223,7 +226,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     if (shouldShowToolbar && editable) {
       return (
         <div className="editor-with-toolbar" style={{ minHeight }}>
-          <Toolbar editor={editor} />
+          <Toolbar editor={editor} pluginActions={pluginToolbarActions} />
           <div
             className={cn('rich-text-editor', className)}
             data-editable={editable}

@@ -10,6 +10,7 @@ import {
   Highlighter,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 interface BubbleMenuProps {
   editor: Editor
@@ -95,6 +96,7 @@ export function BubbleMenu({ editor }: BubbleMenuProps) {
       <div
         ref={menuRef}
         className="bubble-menu"
+        data-slot="editor-bubble-menu"
         style={{
           position: 'fixed',
           top: position.top,
@@ -119,18 +121,19 @@ export function BubbleMenu({ editor }: BubbleMenuProps) {
             }}
             autoFocus
           />
-          <button onClick={setLink} className="bubble-menu-link-submit">
+          <Button size="xs" onClick={setLink}>
             Apply
-          </button>
-          <button
+          </Button>
+          <Button
+            size="xs"
+            variant="ghost"
             onClick={() => {
               setShowLinkInput(false)
               setLinkUrl('')
             }}
-            className="bubble-menu-link-cancel"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -140,6 +143,7 @@ export function BubbleMenu({ editor }: BubbleMenuProps) {
     <div
       ref={menuRef}
       className="bubble-menu"
+      data-slot="editor-bubble-menu"
       style={{
         position: 'fixed',
         top: position.top,
@@ -149,84 +153,77 @@ export function BubbleMenu({ editor }: BubbleMenuProps) {
       }}
       onMouseDown={(e) => e.preventDefault()}
     >
-      <button
+      <Button
+        variant={editor.isActive('bold') ? 'default' : 'ghost'}
+        size="icon-sm"
         onClick={() => editor.chain().focus().toggleBold().run()}
-        className={cn(
-          'bubble-menu-button',
-          editor.isActive('bold') && 'bubble-menu-button-active'
-        )}
+        className={cn(editor.isActive('bold') && 'bg-primary text-primary-foreground')}
         title="Bold (Cmd+B)"
       >
         <Bold size={16} />
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant={editor.isActive('italic') ? 'default' : 'ghost'}
+        size="icon-sm"
         onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={cn(
-          'bubble-menu-button',
-          editor.isActive('italic') && 'bubble-menu-button-active'
-        )}
+        className={cn(editor.isActive('italic') && 'bg-primary text-primary-foreground')}
         title="Italic (Cmd+I)"
       >
         <Italic size={16} />
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant={editor.isActive('underline') ? 'default' : 'ghost'}
+        size="icon-sm"
         onClick={() => editor.chain().focus().toggleUnderline().run()}
-        className={cn(
-          'bubble-menu-button',
-          editor.isActive('underline') && 'bubble-menu-button-active'
-        )}
+        className={cn(editor.isActive('underline') && 'bg-primary text-primary-foreground')}
         title="Underline (Cmd+U)"
       >
         <UnderlineIcon size={16} />
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant={editor.isActive('strike') ? 'default' : 'ghost'}
+        size="icon-sm"
         onClick={() => editor.chain().focus().toggleStrike().run()}
-        className={cn(
-          'bubble-menu-button',
-          editor.isActive('strike') && 'bubble-menu-button-active'
-        )}
+        className={cn(editor.isActive('strike') && 'bg-primary text-primary-foreground')}
         title="Strikethrough"
       >
         <Strikethrough size={16} />
-      </button>
+      </Button>
 
       <div className="bubble-menu-divider" />
 
-      <button
+      <Button
+        variant={editor.isActive('code') ? 'default' : 'ghost'}
+        size="icon-sm"
         onClick={() => editor.chain().focus().toggleCode().run()}
-        className={cn(
-          'bubble-menu-button',
-          editor.isActive('code') && 'bubble-menu-button-active'
-        )}
+        className={cn(editor.isActive('code') && 'bg-primary text-primary-foreground')}
         title="Inline Code (Cmd+E)"
       >
         <Code size={16} />
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant={editor.isActive('link') ? 'default' : 'ghost'}
+        size="icon-sm"
         onClick={toggleLink}
-        className={cn(
-          'bubble-menu-button',
-          editor.isActive('link') && 'bubble-menu-button-active'
-        )}
+        className={cn(editor.isActive('link') && 'bg-primary text-primary-foreground')}
         title="Add Link (Cmd+K)"
       >
         <Link size={16} />
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant={editor.isActive('highlight') ? 'default' : 'ghost'}
+        size="icon-sm"
         onClick={() => editor.chain().focus().toggleHighlight().run()}
-        className={cn(
-          'bubble-menu-button',
-          editor.isActive('highlight') && 'bubble-menu-button-active'
-        )}
+        className={cn(editor.isActive('highlight') && 'bg-primary text-primary-foreground')}
         title="Highlight"
       >
         <Highlighter size={16} />
-      </button>
+      </Button>
     </div>
   )
 }

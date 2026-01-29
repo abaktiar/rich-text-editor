@@ -117,3 +117,17 @@ export interface CommandMenuState {
   items: SlashCommand[]
   position: { top: number; left: number } | null
 }
+
+// File attachment types
+export type FileDisplayMode = 'block' | 'inline'
+export type FileAlignment = 'left' | 'center' | 'right'
+
+export interface FileAttachmentAttributes {
+  src: string
+  name: string
+  size: number
+  mimeType: string
+  displayMode: FileDisplayMode
+  alignment: FileAlignment
+  width: number | null
+}

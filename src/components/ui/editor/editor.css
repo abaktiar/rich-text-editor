@@ -459,34 +459,6 @@
   }
 }
 
-.bubble-menu-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border: none;
-  background: none;
-  border-radius: 0.25rem;
-  color: var(--foreground);
-  cursor: pointer;
-  transition: background-color 0.1s ease, color 0.1s ease;
-}
-
-.bubble-menu-button:hover {
-  background-color: var(--accent);
-}
-
-.bubble-menu-button-active {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-.bubble-menu-button-active:hover {
-  background-color: var(--primary);
-  opacity: 0.9;
-}
-
 .bubble-menu-divider {
   width: 1px;
   height: 1.25rem;
@@ -699,44 +671,6 @@
   z-index: 10;
 }
 
-.toolbar-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--foreground);
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.toolbar-button:hover {
-  background-color: var(--accent);
-}
-
-.toolbar-button-active {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-.toolbar-button-active:hover {
-  background-color: var(--primary);
-  opacity: 0.9;
-}
-
-.toolbar-button-disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.toolbar-button-disabled:hover {
-  background: none;
-}
-
 .toolbar-divider {
   width: 1px;
   height: 1.5rem;
@@ -797,5 +731,134 @@
 .editor-with-toolbar .rich-text-editor {
   border: none;
   border-radius: 0;
+}
+
+/* ======================================
+   File Attachment Styles
+   ====================================== */
+
+/* Block/Card mode - displays as a card */
+.file-attachment-block-wrapper {
+  display: flex;
+  margin: 0.75rem 0;
+  width: 100%;
+}
+
+.file-attachment-block {
+  user-select: none;
+}
+
+/* Selection state for block mode */
+.file-attachment-block-wrapper .ProseMirror-selectednode,
+.file-attachment-block-wrapper:has(.ProseMirror-selectednode) .file-attachment-block {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* Inline mode - displays inline with text, properly aligned */
+.file-attachment-inline-wrapper {
+  display: inline;
+  line-height: 1;
+}
+
+.file-attachment-inline {
+  user-select: none;
+  /* Vertical alignment fix - align to text baseline */
+  vertical-align: baseline;
+  position: relative;
+  top: 0.125em; /* Fine-tune alignment with text */
+  line-height: 1.4;
+}
+
+/* Selection state for inline mode */
+.file-attachment-inline-wrapper .ProseMirror-selectednode,
+.file-attachment-inline:has(.ProseMirror-selectednode) {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+  border-radius: 0.375rem;
+}
+
+/* Uploading state */
+.file-attachment-uploading {
+  opacity: 0.6;
+  position: relative;
+  overflow: hidden;
+}
+
+.file-attachment-uploading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--primary), 0.1) 50%,
+    transparent 100%
+  );
+  animation: file-attachment-shimmer 1.5s infinite;
+}
+
+@keyframes file-attachment-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Preview thumbnail */
+.file-attachment-preview img {
+  object-fit: cover;
+}
+
+/* Drag handle cursor for block mode */
+.file-attachment-block-wrapper[data-drag-handle] {
+  cursor: grab;
+}
+
+.file-attachment-block-wrapper[data-drag-handle]:active {
+  cursor: grabbing;
+}
+
+/* ======================================
+   File Attachment Menu Styles
+   ====================================== */
+
+.file-attachment-menu {
+  animation: file-attachment-menu-appear 0.15s ease-out;
+}
+
+@keyframes file-attachment-menu-appear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+/* File preview dialog animations */
+@keyframes file-preview-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes file-preview-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
