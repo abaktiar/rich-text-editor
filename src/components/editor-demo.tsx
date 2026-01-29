@@ -5,6 +5,7 @@ import {
   type RichTextEditorRef,
   type EditorContent,
   createFileUploadPlugin,
+  createMentionPlugin,
 } from '@/components/ui/editor'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -20,7 +21,20 @@ import {
   Terminal,
   Zap,
   Paperclip,
+  AtSign,
 } from 'lucide-react'
+
+// Sample users for mention demo
+const sampleUsers = [
+  { id: '1', label: 'John Doe', avatar: 'https://i.pravatar.cc/150?u=john' },
+  { id: '2', label: 'Jane Smith', avatar: 'https://i.pravatar.cc/150?u=jane' },
+  { id: '3', label: 'Alex Johnson', avatar: 'https://i.pravatar.cc/150?u=alex' },
+  { id: '4', label: 'Sarah Wilson', avatar: 'https://i.pravatar.cc/150?u=sarah' },
+  { id: '5', label: 'Mike Brown', avatar: 'https://i.pravatar.cc/150?u=mike' },
+  { id: '6', label: 'Emily Davis', avatar: 'https://i.pravatar.cc/150?u=emily' },
+  { id: '7', label: 'Chris Taylor' }, // No avatar
+  { id: '8', label: 'Amanda Lee', avatar: 'https://i.pravatar.cc/150?u=amanda' },
+]
 
 // Demo content showcasing various features
 const demoContent = `
@@ -124,6 +138,31 @@ export function EditorDemo() {
     [],
   );
 
+  // Shared mention click handler for edit and view modes
+  const handleMentionClick = (item: { id: string; label: string }) => {
+    console.log('Clicked mention:', item.label);
+    alert(`Clicked on @${item.label}`);
+  };
+
+  // Create mention plugin with user search
+  const mentionPlugin = useMemo(
+    () =>
+      createMentionPlugin({
+        onSearch: async (query) => {
+          // Simulate API delay
+          await new Promise((r) => setTimeout(r, 100));
+          return sampleUsers.filter((u) =>
+            u.label.toLowerCase().includes(query.toLowerCase())
+          );
+        },
+        onMentionSelect: (item) => {
+          console.log('Mentioned:', item.label);
+        },
+        onMentionClick: handleMentionClick,
+      }),
+    []
+  );
+
   const toggleTheme = () => {
     setIsDark((prev) => !prev)
     document.documentElement.classList.toggle('dark')
@@ -154,6 +193,11 @@ export function EditorDemo() {
       icon: Paperclip,
       title: 'File Attachments',
       description: 'Inline or card view, full-screen preview, drag & drop support',
+    },
+    {
+      icon: AtSign,
+      title: 'Mentions',
+      description: 'Type "@" to mention users with async search',
     },
     {
       icon: Sparkles,
@@ -244,17 +288,21 @@ export function EditorDemo() {
             placeholder="Type '/' for commands..."
             minHeight='400px'
             className='border-0'
-            plugins={[fileUploadPlugin]}
+            plugins={[fileUploadPlugin, mentionPlugin]}
           />
         ) : (
           <Card className='overflow-hidden'>
-            <RichTextViewer content={content.html ?? ''} className='border-0 min-h-[400px]' />
+            <RichTextViewer
+              content={content.html ?? ''}
+              className='border-0 min-h-[400px]'
+              onMentionClick={handleMentionClick}
+            />
           </Card>
         )}
 
         <p className='text-sm text-muted-foreground mt-4 text-center'>
-          Tip: Type "/file" for inline attachment or "/filecard" for card view. Click any file to preview. Supports
-          images, PDFs, CSV, and text files.
+          Tip: Type "@" to mention users, "/file" for attachments, or "/filecard" for card view. Click mentions or files
+          to interact.
         </p>
       </section>
 

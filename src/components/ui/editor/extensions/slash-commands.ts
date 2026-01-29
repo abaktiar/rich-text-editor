@@ -1,7 +1,10 @@
 import { Extension } from '@tiptap/core'
 import { Suggestion } from '@tiptap/suggestion'
+import { PluginKey } from '@tiptap/pm/state'
 import type { SlashCommand } from '../types'
 import type { Editor, Range } from '@tiptap/core'
+
+const slashCommandsPluginKey = new PluginKey('slashCommands')
 
 export interface SlashCommandsOptions {
   suggestion: {
@@ -44,6 +47,7 @@ export const SlashCommands = Extension.create<SlashCommandsOptions>({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Suggestion({
         editor: this.editor,
+        pluginKey: slashCommandsPluginKey,
         ...this.options.suggestion,
       } as any),
     ]

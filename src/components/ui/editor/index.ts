@@ -34,6 +34,8 @@ export {
   createFileUploadPlugin,
   type FileUploadPluginOptions,
   type DisplayModeByType,
+  createMentionPlugin,
+  type MentionPluginOptions,
 } from './plugins'
 
 // Extensions
@@ -47,3 +49,5 @@ export type {
   ImagePreviewOptions,
   PdfPreviewOptions,
 } from './extensions/file-attachment'
+
+export { MentionExtension } from './extensions/mention-extension'

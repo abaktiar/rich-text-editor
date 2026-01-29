@@ -89,6 +89,8 @@ export interface RichTextViewerProps {
   content: string | Record<string, unknown>
   /** Additional class names */
   className?: string
+  /** Callback when a mention is clicked */
+  onMentionClick?: (item: MentionItem, event: MouseEvent) => void
 }
 
 // Mention types
@@ -96,6 +98,7 @@ export interface MentionItem {
   id: string
   label: string
   avatar?: string
+  metadata?: Record<string, unknown>
 }
 
 // Editor ref for imperative handle
