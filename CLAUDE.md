@@ -86,7 +86,7 @@ interface EditorPlugin {
 This project is configured as a **shadcn registry** for community distribution. Users can install the editor via:
 
 ```bash
-npx shadcn add https://abaktiar.github.io/rich-text-editor/r/rich-text-editor
+npx shadcn@latest add https://abaktiar.github.io/rich-text-editor/r/rich-text-editor.json
 ```
 
 ### Registry Structure
