@@ -24,6 +24,12 @@ import type {
 import { cn } from '@/lib/utils'
 import './editor.css'
 
+// Helper to format CSS value (adds 'px' if number)
+const formatCssValue = (value: string | number | undefined): string | undefined => {
+  if (value === undefined) return undefined
+  return typeof value === 'number' ? `${value}px` : value
+}
+
 export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
   function RichTextEditor(
     {
@@ -36,6 +42,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       showToolbar,
       plugins = [],
       minHeight = '200px',
+      codeBlockMaxHeight,
     },
     ref
   ) {
@@ -234,9 +241,15 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     // Determine if toolbar should be shown (defaults to true in edit mode)
     const shouldShowToolbar = showToolbar ?? editable
 
+    // Build style object with CSS custom properties
+    const editorStyle = {
+      minHeight,
+      '--code-block-max-height': formatCssValue(codeBlockMaxHeight),
+    } as React.CSSProperties
+
     if (shouldShowToolbar && editable) {
       return (
-        <div className="editor-with-toolbar" style={{ minHeight }}>
+        <div className="editor-with-toolbar" style={editorStyle}>
           <Toolbar editor={editor} pluginActions={pluginToolbarActions} />
           <div
             className={cn('rich-text-editor', className)}
@@ -258,7 +271,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       <div
         className={cn('rich-text-editor', className)}
         data-editable={editable}
-        style={{ minHeight }}
+        style={editorStyle}
       >
         {editable && <BubbleMenu editor={editor} />}
         <EditorContent editor={editor} />

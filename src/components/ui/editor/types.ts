@@ -87,6 +87,8 @@ export interface RichTextEditorProps {
   plugins?: EditorPlugin[]
   /** Minimum height of the editor */
   minHeight?: string | number
+  /** Maximum height for code blocks. If not set, code blocks expand fully. */
+  codeBlockMaxHeight?: string | number
 }
 
 // Viewer props (lighter weight)
@@ -97,6 +99,8 @@ export interface RichTextViewerProps {
   className?: string
   /** Callback when a mention is clicked */
   onMentionClick?: (item: MentionItem, event: MouseEvent) => void
+  /** Maximum height for code blocks. If not set, code blocks expand fully. */
+  codeBlockMaxHeight?: string | number
 }
 
 // Mention types

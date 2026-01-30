@@ -638,6 +638,8 @@
   margin: 0;
   padding: 1rem;
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: var(--code-block-max-height, none);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.6;

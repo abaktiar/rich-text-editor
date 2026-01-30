@@ -287,6 +287,7 @@ export function EditorDemo() {
             onChange={setContent}
             placeholder="Type '/' for commands..."
             minHeight='400px'
+            codeBlockMaxHeight={500}
             className='border-0'
             plugins={[fileUploadPlugin, mentionPlugin]}
           />
@@ -295,6 +296,7 @@ export function EditorDemo() {
             <RichTextViewer
               content={content.html ?? ''}
               className='border-0 min-h-[400px]'
+              codeBlockMaxHeight={500}
               onMentionClick={handleMentionClick}
             />
           </Card>
