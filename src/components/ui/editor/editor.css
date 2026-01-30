@@ -781,6 +781,39 @@
 }
 
 /* ======================================
+   Image Resize Handle Styles
+   ====================================== */
+
+.image-resize-handle {
+  z-index: 10;
+}
+
+.image-resize-handle-inner {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  border-radius: 0 0 3px 0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  box-shadow: 1px 1px 2px hsl(var(--background) / 0.8);
+}
+
+.image-resize-handle:hover .image-resize-handle-inner {
+  transform: scale(1.2);
+}
+
+.image-resize-handle-active .image-resize-handle-inner {
+  transform: scale(1.3);
+  border-color: var(--primary);
+}
+
+/* Image container during resize */
+.file-attachment-image-container.resizing {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ======================================
    File Attachment Menu Styles
    ====================================== */
 
@@ -911,5 +944,462 @@
 
 .tippy-content {
   padding: 0;
+}
+
+/* ======================================
+   Table Styles
+   ====================================== */
+
+/* Table wrapper */
+.tiptap .tableWrapper {
+  margin: 1.5rem 0 2rem 0;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  transition: box-shadow 0.15s ease;
+}
+
+/* Table wrapper alignment */
+.tiptap .tableWrapper[data-alignment="center"] {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tiptap .tableWrapper[data-alignment="right"] {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Main table */
+.tiptap table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+}
+
+/* Table cells - both td and th */
+.tiptap td,
+.tiptap th {
+  border: 1px solid var(--border);
+  box-sizing: border-box;
+  min-width: 100px;
+  padding: 0.75rem 1rem;
+  position: relative;
+  vertical-align: top;
+  text-align: left;
+  background-color: var(--background);
+  transition: background-color 0.1s ease;
+}
+
+/* Header cells */
+.tiptap th {
+  background-color: var(--muted);
+  font-weight: 600;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Remove margins from content inside cells */
+.tiptap td > *,
+.tiptap th > * {
+  margin: 0;
+}
+
+/* Paragraph inside cells */
+.tiptap td p,
+.tiptap th p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Selected cell highlight */
+.tiptap .selectedCell::after {
+  background-color: hsl(var(--primary) / 0.1);
+  content: '';
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+/* Column resize handle */
+.tiptap .column-resize-handle {
+  background-color: var(--primary);
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  right: -1px;
+  top: 0;
+  width: 3px;
+  z-index: 20;
+}
+
+/* Resize cursor state */
+.tiptap.resize-cursor {
+  cursor: col-resize;
+}
+
+/* Hover effect on cells in edit mode */
+.rich-text-editor[data-editable="true"] .tiptap td:hover {
+  background-color: hsl(var(--accent) / 0.5);
+}
+
+.rich-text-editor[data-editable="true"] .tiptap th:hover {
+  background-color: color-mix(in oklch, var(--muted) 100%, var(--foreground) 4%);
+}
+
+/* First/last cell border radius */
+.tiptap table tr:first-child th:first-child,
+.tiptap table tr:first-child td:first-child {
+  border-top-left-radius: 0.375rem;
+}
+
+.tiptap table tr:first-child th:last-child,
+.tiptap table tr:first-child td:last-child {
+  border-top-right-radius: 0.375rem;
+}
+
+.tiptap table tr:last-child td:first-child,
+.tiptap table tr:last-child th:first-child {
+  border-bottom-left-radius: 0.375rem;
+}
+
+.tiptap table tr:last-child td:last-child,
+.tiptap table tr:last-child th:last-child {
+  border-bottom-right-radius: 0.375rem;
+}
+
+/* Dark mode adjustments */
+.dark .tiptap th {
+  background-color: var(--muted);
+}
+
+.dark .tiptap td {
+  background-color: var(--background);
+}
+
+.dark .rich-text-editor[data-editable="true"] .tiptap th:hover {
+  background-color: color-mix(in oklch, var(--muted) 100%, var(--foreground) 6%);
+}
+
+/* ======================================
+   Table Controls - Enterprise Style
+   ====================================== */
+
+.table-controls {
+  pointer-events: none;
+}
+
+.table-controls > * {
+  pointer-events: auto;
+}
+
+/* Row handle on the left side */
+.table-row-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  z-index: 40;
+}
+
+.table-row-handle-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 28px;
+  border-radius: 4px;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.table-row-handle:hover .table-row-handle-button,
+.table-row-handle-active .table-row-handle-button {
+  opacity: 1;
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+
+/* Column handle at top */
+.table-col-handle {
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.table-col-add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
+}
+
+.table-col-handle:hover .table-col-add-button,
+.table-col-handle-active .table-col-add-button {
+  opacity: 1;
+}
+
+.table-col-add-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.35);
+}
+
+.table-col-line {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background-color: var(--primary);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.table-col-handle:hover .table-col-line,
+.table-col-handle-active .table-col-line {
+  opacity: 1;
+}
+
+/* Table options button - top left */
+.table-options-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+  z-index: 40;
+}
+
+.table-controls:hover .table-options-button {
+  opacity: 1;
+}
+
+.table-options-button:hover {
+  background-color: var(--accent);
+  color: var(--foreground);
+  border-color: var(--primary);
+}
+
+/* Resize handle - bottom right corner */
+.table-resize-handle {
+  width: 24px;
+  height: 24px;
+  cursor: se-resize;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.table-controls:hover .table-resize-handle,
+.table-resize-handle-active {
+  opacity: 1;
+}
+
+.table-resize-handle-inner {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  border-radius: 0 0 3px 0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.table-resize-handle:hover .table-resize-handle-inner {
+  transform: scale(1.2);
+}
+
+.table-resize-handle-active .table-resize-handle-inner {
+  transform: scale(1.3);
+  border-color: var(--primary);
+}
+
+/* Table wrapper during resize */
+.tiptap .tableWrapper.resizing {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  transition: none !important;
+  overflow: hidden !important;
+}
+
+.tiptap .tableWrapper.resizing table {
+  transition: none !important;
+}
+
+.tiptap .tableWrapper.resizing td,
+.tiptap .tableWrapper.resizing th {
+  transition: none !important;
+}
+
+/* Add row button at bottom */
+.table-add-row-bottom {
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 40;
+}
+
+.table-controls:hover .table-add-row-bottom {
+  opacity: 1;
+}
+
+.table-add-row-bottom-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-add-row-bottom-button:hover {
+  background-color: var(--accent);
+  color: var(--foreground);
+  border-color: var(--primary);
+}
+
+/* Dropdown menus */
+.table-control-dropdown {
+  position: absolute;
+  min-width: 150px;
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px -8px hsl(var(--foreground) / 0.2);
+  padding: 4px;
+  z-index: 60;
+  animation: table-dropdown-appear 0.12s ease-out;
+}
+
+.table-row-dropdown {
+  top: 0;
+  left: calc(100% + 4px);
+}
+
+.table-col-dropdown {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes table-dropdown-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.table-control-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--foreground);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s ease;
+}
+
+.table-control-dropdown-item:hover {
+  background-color: var(--accent);
+}
+
+.table-control-dropdown-item-danger {
+  color: var(--destructive);
+}
+
+.table-control-dropdown-item-danger:hover {
+  background-color: hsl(var(--destructive) / 0.1);
+}
+
+.table-control-dropdown-divider {
+  height: 1px;
+  background-color: var(--border);
+  margin: 4px 8px;
+}
+
+/* Floating table menu */
+.table-floating-menu {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  background-color: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.15);
+  animation: table-floating-menu-appear 0.15s ease-out;
+}
+
+@keyframes table-floating-menu-appear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.table-menu-section {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.table-menu-divider {
+  width: 1px;
+  height: 20px;
+  background-color: var(--border);
+  margin: 0 4px;
 }
 

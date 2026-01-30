@@ -182,9 +182,15 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
   // Add/remove resize event listeners
   useEffect(() => {
     if (isResizing) {
+      // Add cursor style to body for smooth resize experience
+      document.body.style.cursor = 'se-resize'
+      document.body.style.userSelect = 'none'
+
       window.addEventListener('mousemove', handleResizeMove)
       window.addEventListener('mouseup', handleResizeEnd)
       return () => {
+        document.body.style.cursor = ''
+        document.body.style.userSelect = ''
         window.removeEventListener('mousemove', handleResizeMove)
         window.removeEventListener('mouseup', handleResizeEnd)
       }
@@ -241,17 +247,18 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
           {isEditable && (
             <div
               className={cn(
-                'absolute bottom-0 right-0 w-4 h-4',
+                'image-resize-handle',
+                'absolute -bottom-2 -right-2 w-6 h-6',
                 'cursor-se-resize',
                 'opacity-0 group-hover:opacity-100',
                 'transition-opacity',
                 'flex items-center justify-center',
-                isResizing && 'opacity-100'
+                isResizing && 'image-resize-handle-active opacity-100'
               )}
               onMouseDown={handleResizeStart}
               title="Drag to resize"
             >
-              <div className="w-2 h-2 bg-primary rounded-sm" />
+              <div className="image-resize-handle-inner" />
             </div>
           )}
 

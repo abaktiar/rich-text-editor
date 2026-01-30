@@ -11,6 +11,7 @@ import { Highlight } from '@tiptap/extension-highlight'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { EnhancedCodeBlock } from './code-block'
+import { tableExtensions } from './table'
 
 export interface ExtensionOptions {
   placeholder?: string
@@ -66,6 +67,7 @@ export function createExtensions(options: ExtensionOptions = {}) {
     }),
     TextStyle,
     Color,
+    ...tableExtensions,
   ]
 }
 

@@ -20,6 +20,7 @@ import {
   AlignRight,
   Highlighter,
   Type,
+  Table2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -208,6 +209,12 @@ export function Toolbar({ editor, pluginActions = [] }: ToolbarProps) {
         icon={<Minus size={16} />}
         onClick={() => editor.chain().focus().setHorizontalRule().run()}
         title="Divider"
+      />
+      <ToolbarButton
+        icon={<Table2 size={16} />}
+        onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+        isActive={editor.isActive('table')}
+        title="Insert table"
       />
 
       <ToolbarDivider />

@@ -12,6 +12,7 @@ import { SlashCommands } from './extensions/slash-commands'
 import { defaultSlashCommands } from './commands'
 import { CommandMenu, type CommandMenuRef } from './command-menu'
 import { BubbleMenu } from './bubble-menu'
+import { TableControls } from './table-controls'
 import { Toolbar } from './toolbar'
 import { FloatingLinkPopover } from './link-popover'
 import type {
@@ -256,6 +257,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             data-editable={editable}
           >
             <BubbleMenu editor={editor} />
+            <TableControls editor={editor} />
             <EditorContent editor={editor} />
           </div>
           <FloatingLinkPopover
@@ -274,6 +276,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
         style={editorStyle}
       >
         {editable && <BubbleMenu editor={editor} />}
+        {editable && <TableControls editor={editor} />}
         <EditorContent editor={editor} />
         {editable && (
           <FloatingLinkPopover

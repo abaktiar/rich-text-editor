@@ -14,6 +14,7 @@ import {
   Link,
   Highlighter,
   CodeSquare,
+  Table2,
 } from 'lucide-react'
 
 // Command group definitions
@@ -167,6 +168,16 @@ export const defaultSlashCommands: SlashCommand[] = [
     group: 'advanced',
     action: (editor: Editor) => {
       editor.chain().focus().setHorizontalRule().run()
+    },
+  },
+  {
+    name: 'Table',
+    description: 'Insert a table',
+    icon: Table2,
+    aliases: ['table', 'grid'],
+    group: 'advanced',
+    action: (editor: Editor) => {
+      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
     },
   },
 ]
