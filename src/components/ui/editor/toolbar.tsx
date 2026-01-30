@@ -13,8 +13,6 @@ import {
   CheckSquare,
   Quote,
   Minus,
-  Link,
-  Image,
   Undo,
   Redo,
   AlignLeft,
@@ -24,9 +22,9 @@ import {
   Type,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useCallback, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import type { ToolbarAction } from './types'
+import { LinkPopoverButton } from './link-popover'
 
 interface ToolbarProps {
   editor: Editor
@@ -65,24 +63,6 @@ function ToolbarDivider() {
 }
 
 export function Toolbar({ editor, pluginActions = [] }: ToolbarProps) {
-  const [showLinkInput, setShowLinkInput] = useState(false)
-  const [linkUrl, setLinkUrl] = useState('')
-
-  const setLink = useCallback(() => {
-    if (linkUrl) {
-      editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run()
-    }
-    setShowLinkInput(false)
-    setLinkUrl('')
-  }, [editor, linkUrl])
-
-  const addImage = useCallback(() => {
-    const url = window.prompt('Enter image URL:')
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run()
-    }
-  }, [editor])
-
   if (!editor) {
     return null
   }
@@ -233,46 +213,7 @@ export function Toolbar({ editor, pluginActions = [] }: ToolbarProps) {
       <ToolbarDivider />
 
       {/* Link */}
-      {showLinkInput ? (
-        <div className="toolbar-link-input">
-          <input
-            type="url"
-            placeholder="Enter URL..."
-            value={linkUrl}
-            onChange={(e) => setLinkUrl(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') setLink()
-              if (e.key === 'Escape') {
-                setShowLinkInput(false)
-                setLinkUrl('')
-              }
-            }}
-            autoFocus
-          />
-          <Button size="xs" onClick={setLink}>Add</Button>
-          <Button size="xs" variant="ghost" onClick={() => { setShowLinkInput(false); setLinkUrl('') }}>×</Button>
-        </div>
-      ) : (
-        <ToolbarButton
-          icon={<Link size={16} />}
-          onClick={() => {
-            if (editor.isActive('link')) {
-              editor.chain().focus().unsetLink().run()
-            } else {
-              setShowLinkInput(true)
-            }
-          }}
-          isActive={editor.isActive('link')}
-          title="Add link"
-        />
-      )}
-
-      {/* Image */}
-      <ToolbarButton
-        icon={<Image size={16} />}
-        onClick={addImage}
-        title="Add image"
-      />
+      <LinkPopoverButton editor={editor} variant="toolbar" />
 
       {/* Plugin Actions */}
       {pluginActions.length > 0 && (

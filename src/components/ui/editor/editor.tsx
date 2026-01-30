@@ -3,6 +3,7 @@ import {
   useCallback,
   useImperativeHandle,
   useState,
+  useMemo,
 } from 'react'
 import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react'
 import tippy, { type Instance as TippyInstance } from 'tippy.js'
@@ -12,11 +13,13 @@ import { defaultSlashCommands } from './commands'
 import { CommandMenu, type CommandMenuRef } from './command-menu'
 import { BubbleMenu } from './bubble-menu'
 import { Toolbar } from './toolbar'
+import { FloatingLinkPopover } from './link-popover'
 import type {
   RichTextEditorProps,
   RichTextEditorRef,
   SlashCommand,
   EditorContentFormat,
+  EditorActionContext,
 } from './types'
 import { cn } from '@/lib/utils'
 import './editor.css'
@@ -37,6 +40,14 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     ref
   ) {
     const [, setForceUpdate] = useState(0)
+    const [linkPopoverOpen, setLinkPopoverOpen] = useState(false)
+
+    // Action context for commands that need to open popovers/dialogs
+    const openLinkPopover = useCallback(() => setLinkPopoverOpen(true), [setLinkPopoverOpen])
+    const actionContext = useMemo<EditorActionContext>(
+      () => ({ openLinkPopover }),
+      [openLinkPopover]
+    )
 
     // Collect slash commands from plugins
     const allSlashCommands = [
@@ -69,7 +80,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (editor as any).chain().focus().deleteRange(range).run()
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              props.action(editor as any)
+              props.action(editor as any, actionContext)
             },
             render: () => {
               let component: ReactRenderer<CommandMenuRef> | null = null
@@ -82,7 +93,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 onStart: (props: { editor: unknown; clientRect: (() => DOMRect | null) | null; items: SlashCommand[]; range: unknown }) => {
                   currentEditor = props.editor
                   currentRange = props.range
-                  
+
                   component = new ReactRenderer(CommandMenu, {
                     props: {
                       items: props.items,
@@ -93,7 +104,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           (currentEditor as any).chain().focus().deleteRange(currentRange).run()
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          command.action(currentEditor as any)
+                          command.action(currentEditor as any, actionContext)
                         }
                         popup?.[0]?.hide()
                       },
@@ -119,7 +130,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 onUpdate: (props: { query: string; items: SlashCommand[]; clientRect: (() => DOMRect | null) | null; range: unknown }) => {
                   // Update the range as user types
                   currentRange = props.range
-                  
+
                   component?.updateProps({
                     items: props.items,
                     query: props.query,
@@ -234,6 +245,11 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             <BubbleMenu editor={editor} />
             <EditorContent editor={editor} />
           </div>
+          <FloatingLinkPopover
+            editor={editor}
+            open={linkPopoverOpen}
+            onOpenChange={setLinkPopoverOpen}
+          />
         </div>
       )
     }
@@ -246,6 +262,13 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       >
         {editable && <BubbleMenu editor={editor} />}
         <EditorContent editor={editor} />
+        {editable && (
+          <FloatingLinkPopover
+            editor={editor}
+            open={linkPopoverOpen}
+            onOpenChange={setLinkPopoverOpen}
+          />
+        )}
       </div>
     )
   }

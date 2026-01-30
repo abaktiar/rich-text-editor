@@ -1,5 +1,5 @@
 import type { Editor } from '@tiptap/react'
-import type { SlashCommand, SlashCommandGroupInfo } from './types'
+import type { SlashCommand, SlashCommandGroupInfo, EditorActionContext } from './types'
 import {
   Type,
   Heading1,
@@ -11,16 +11,19 @@ import {
   Quote,
   Code,
   Minus,
-  Image,
+  Link,
+  Highlighter,
+  CodeSquare,
 } from 'lucide-react'
 
 // Command group definitions
 export const commandGroups: SlashCommandGroupInfo[] = [
   { id: 'basic', label: 'Basic Blocks', priority: 1 },
   { id: 'lists', label: 'Lists', priority: 2 },
-  { id: 'media', label: 'Media', priority: 3 },
+  { id: 'formatting', label: 'Formatting', priority: 3 },
   { id: 'advanced', label: 'Advanced', priority: 4 },
-  { id: 'custom', label: 'Custom', priority: 5 },
+  { id: 'media', label: 'Media', priority: 5 },
+  { id: 'custom', label: 'Custom', priority: 6 },
 ]
 
 // Default slash commands
@@ -99,6 +102,42 @@ export const defaultSlashCommands: SlashCommand[] = [
     },
   },
 
+  // Formatting
+  {
+    name: 'Inline Code',
+    description: 'Mark text as inline code',
+    icon: CodeSquare,
+    aliases: ['code', 'monospace', 'mono'],
+    group: 'formatting',
+    action: (editor: Editor) => {
+      editor.chain().focus().toggleCode().run()
+    },
+  },
+  {
+    name: 'Highlight',
+    description: 'Highlight important text',
+    icon: Highlighter,
+    aliases: ['mark', 'marker', 'yellow'],
+    group: 'formatting',
+    action: (editor: Editor) => {
+      editor.chain().focus().toggleHighlight().run()
+    },
+  },
+  {
+    name: 'Link',
+    description: 'Add a link to text',
+    icon: Link,
+    aliases: ['url', 'href', 'anchor'],
+    group: 'formatting',
+    action: (_editor: Editor, context?: EditorActionContext) => {
+      if (!context) {
+        console.warn('[RichTextEditor] Link command requires EditorActionContext')
+        return
+      }
+      context.openLinkPopover()
+    },
+  },
+
   // Advanced
   {
     name: 'Quote',
@@ -128,21 +167,6 @@ export const defaultSlashCommands: SlashCommand[] = [
     group: 'advanced',
     action: (editor: Editor) => {
       editor.chain().focus().setHorizontalRule().run()
-    },
-  },
-
-  // Media
-  {
-    name: 'Image',
-    description: 'Upload or embed an image',
-    icon: Image,
-    aliases: ['img', 'picture', 'photo'],
-    group: 'media',
-    action: (editor: Editor) => {
-      const url = window.prompt('Enter image URL:')
-      if (url) {
-        editor.chain().focus().setImage({ src: url }).run()
-      }
     },
   },
 ]

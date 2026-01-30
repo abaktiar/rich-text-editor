@@ -10,6 +10,11 @@ export interface EditorContent {
   text?: string
 }
 
+// Editor action context for commands that need special UI (like dialogs/popovers)
+export interface EditorActionContext {
+  openLinkPopover: () => void
+}
+
 // Slash command types
 export interface SlashCommand {
   name: string
@@ -17,12 +22,13 @@ export interface SlashCommand {
   icon: LucideIcon
   aliases?: string[]
   group: SlashCommandGroup
-  action: (editor: Editor) => void
+  action: (editor: Editor, context?: EditorActionContext) => void
 }
 
-export type SlashCommandGroup = 
+export type SlashCommandGroup =
   | 'basic'
   | 'lists'
+  | 'formatting'
   | 'media'
   | 'advanced'
   | 'custom'
