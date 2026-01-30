@@ -1,8 +1,8 @@
-name: Deploy Registry to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [master, main]
   workflow_dispatch:
 
 permissions:
@@ -32,6 +32,14 @@ jobs:
       - name: Build registry
         run: bun run registry:build
 
+      - name: Build app
+        run: bun run build
+
+      - name: Copy registry to dist
+        run: |
+          mkdir -p dist/r
+          cp -r public/r/* dist/r/
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
@@ -40,7 +48,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: dist
 
   deploy:
     environment:

@@ -7,7 +7,8 @@ import {
   createFileUploadPlugin,
   createMentionPlugin,
 } from '@/components/ui/editor'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import {
   Moon,
   Sun,
@@ -26,7 +27,6 @@ import {
   Sparkles,
   Layers,
   MousePointer2,
-  FileText,
 } from 'lucide-react'
 
 // Sample users for mention demo
@@ -362,29 +362,40 @@ export function EditorDemo() {
       <header className='fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50'>
         <div className='max-w-6xl mx-auto px-6 h-16 flex items-center justify-between'>
           <div className='flex items-center gap-3'>
-            <div className='w-9 h-9 rounded-lg bg-foreground flex items-center justify-center'>
-              <FileText className='w-4 h-4 text-background' />
-            </div>
+            <svg
+              width='36'
+              height='36'
+              viewBox='0 0 32 32'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+              className='rounded-lg'>
+              <rect width='32' height='32' rx='8' fill='currentColor' className='text-foreground' />
+              <path
+                d='M8 10h16M8 16h12M8 22h14'
+                stroke='currentColor'
+                className='text-background'
+                strokeWidth='2.5'
+                strokeLinecap='round'
+              />
+              <circle cx='24' cy='22' r='3' className='fill-demo-warm' />
+            </svg>
             <span className='font-semibold tracking-tight font-[family-name:var(--font-display)]'>
               Rich Text Editor
             </span>
           </div>
 
           <div className='flex items-center gap-2'>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='inline-flex items-center gap-2 text-muted-foreground hover:text-foreground'
-              asChild>
-              <a
-                href='https://github.com/abaktiar/rich-text-editor'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='inline-flex items-center gap-2'>
-                <Github className='w-4 h-4' />
-                <span className='hidden sm:inline'>GitHub</span>
-              </a>
-            </Button>
+            <a
+              href='https://github.com/abaktiar/rich-text-editor'
+              target='_blank'
+              rel='noopener noreferrer'
+              className={cn(
+                buttonVariants({ variant: 'ghost', size: 'sm' }),
+                'inline-flex items-center gap-2 text-muted-foreground hover:text-foreground',
+              )}>
+              <Github className='w-4 h-4' />
+              <span className='hidden sm:inline'>GitHub</span>
+            </a>
             <Button
               variant='ghost'
               size='icon'
@@ -417,22 +428,23 @@ export function EditorDemo() {
           </p>
 
           <div className='animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-4 justify-center items-center mb-12'>
-            <Button size='lg' className='inline-flex items-center gap-2 px-6 h-12 text-base' asChild>
-              <a href='#demo' className='inline-flex items-center gap-2'>
-                Try the Demo
-                <ArrowRight className='w-4 h-4' />
-              </a>
-            </Button>
-            <Button variant='outline' size='lg' className='inline-flex items-center gap-2 px-6 h-12 text-base' asChild>
-              <a
-                href='https://github.com/abaktiar/rich-text-editor'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='inline-flex items-center gap-2'>
-                <Github className='w-4 h-4' />
-                View on GitHub
-              </a>
-            </Button>
+            <a
+              href='#demo'
+              className={cn(buttonVariants({ size: 'lg' }), 'inline-flex items-center gap-2 px-6 h-12 text-base')}>
+              Try the Demo
+              <ArrowRight className='w-4 h-4' />
+            </a>
+            <a
+              href='https://github.com/abaktiar/rich-text-editor'
+              target='_blank'
+              rel='noopener noreferrer'
+              className={cn(
+                buttonVariants({ variant: 'outline', size: 'lg' }),
+                'inline-flex items-center gap-2 px-6 h-12 text-base',
+              )}>
+              <Github className='w-4 h-4' />
+              View on GitHub
+            </a>
           </div>
 
           {/* Install command */}
@@ -641,16 +653,14 @@ export function EditorDemo() {
           </p>
 
           <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-            <Button size='lg' className='inline-flex items-center gap-2 px-8 h-12 text-base' asChild>
-              <a
-                href='https://github.com/abaktiar/rich-text-editor'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='inline-flex items-center gap-2'>
-                <Github className='w-4 h-4' />
-                Get Started
-              </a>
-            </Button>
+            <a
+              href='https://github.com/abaktiar/rich-text-editor'
+              target='_blank'
+              rel='noopener noreferrer'
+              className={cn(buttonVariants({ size: 'lg' }), 'inline-flex items-center gap-2 px-8 h-12 text-base')}>
+              <Github className='w-4 h-4' />
+              Get Started
+            </a>
           </div>
         </div>
       </section>
@@ -685,7 +695,7 @@ export function EditorDemo() {
               className='underline underline-offset-4 hover:text-foreground transition-colors'
               target='_blank'
               rel='noopener noreferrer'>
-              A. Baktiar
+              Al Baktiar
             </a>
             {' & '}
             <a
