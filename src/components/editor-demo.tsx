@@ -39,7 +39,7 @@ const sampleUsers = [
 // Demo content showcasing various features
 const demoContent = `
 <h1>Welcome to Rich Text Editor</h1>
-<p>A Notion-style editor built for React with <strong>full formatting</strong>, <em>slash commands</em>, and <u>extensibility</u>.</p>
+<p>A modern editor built for React with <strong>full formatting</strong>, <em>slash commands</em>, and <u>extensibility</u>.</p>
 
 <h2>✨ Features</h2>
 <ul>
@@ -233,7 +233,7 @@ export function EditorDemo() {
 
       {/* Hero */}
       <section className='container mx-auto px-4 py-16 text-center'>
-        <h1 className='text-4xl sm:text-5xl font-bold mb-4'>Notion-Style Rich Text Editor</h1>
+        <h1 className='text-4xl sm:text-5xl font-bold mb-4'>Rich Text Editor</h1>
         <p className='text-lg text-muted-foreground max-w-2xl mx-auto mb-8'>
           A beautiful, extensible editor component for React. Built with Tiptap, styled with shadcn/ui, and designed for
           developers.

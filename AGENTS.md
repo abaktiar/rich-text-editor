@@ -1,6 +1,6 @@
 # AGENTS.md
 
-A Notion-style Rich Text Editor built with Tiptap, React, TypeScript, and shadcn/ui styling.
+A modern, feature-rich text editor component for React. Built with Tiptap 3.x, React 19, TypeScript, and shadcn/ui styling. Includes slash commands, code blocks with syntax highlighting, tables, @mentions, callouts, toggles, and file attachments.
 
 ## Setup Commands
 

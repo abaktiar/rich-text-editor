@@ -3,11 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "email": "dev.baktiar@gmail.com",
+    "name": "Al Baktiar",
+    "url": "https://github.com/abaktiar"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "registry:build": "shadcn build",
+    "registry:dev": "shadcn build --watch"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
