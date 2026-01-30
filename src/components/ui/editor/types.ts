@@ -89,6 +89,8 @@ export interface RichTextEditorProps {
   minHeight?: string | number
   /** Maximum height for code blocks. If not set, code blocks expand fully. */
   codeBlockMaxHeight?: string | number
+  /** Custom callout types. If not provided, defaults to info, warning, error, success. */
+  calloutTypes?: CalloutTypeConfig[]
 }
 
 // Viewer props (lighter weight)
@@ -143,4 +145,26 @@ export interface FileAttachmentAttributes {
   displayMode: FileDisplayMode
   alignment: FileAlignment
   width: number | null
+}
+
+// Callout types
+export interface CalloutTypeConfig {
+  /** Unique identifier for this callout type */
+  id: string
+  /** Display label shown in dropdown */
+  label: string
+  /** Lucide icon component */
+  icon: LucideIcon
+  /** Light mode background color (CSS color value) */
+  bgLight?: string
+  /** Light mode border color (CSS color value) */
+  borderLight?: string
+  /** Light mode icon color (CSS color value) */
+  iconColorLight?: string
+  /** Dark mode background color (CSS color value) */
+  bgDark?: string
+  /** Dark mode border color (CSS color value) */
+  borderDark?: string
+  /** Dark mode icon color (CSS color value) */
+  iconColorDark?: string
 }

@@ -12,9 +12,13 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { EnhancedCodeBlock } from './code-block'
 import { tableExtensions } from './table'
+import { Callout } from './callout'
+import { Toggle } from './toggle'
+import type { CalloutTypeConfig } from '../types'
 
 export interface ExtensionOptions {
   placeholder?: string
+  calloutTypes?: CalloutTypeConfig[]
 }
 
 export function createExtensions(options: ExtensionOptions = {}) {
@@ -68,6 +72,10 @@ export function createExtensions(options: ExtensionOptions = {}) {
     TextStyle,
     Color,
     ...tableExtensions,
+    Callout.configure({
+      calloutTypes: options.calloutTypes,
+    }),
+    Toggle,
   ]
 }
 

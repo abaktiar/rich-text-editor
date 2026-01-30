@@ -15,6 +15,8 @@ import {
   Highlighter,
   CodeSquare,
   Table2,
+  Info,
+  ChevronRight,
 } from 'lucide-react'
 
 // Command group definitions
@@ -178,6 +180,26 @@ export const defaultSlashCommands: SlashCommand[] = [
     group: 'advanced',
     action: (editor: Editor) => {
       editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+    },
+  },
+  {
+    name: 'Callout',
+    description: 'Highlight important information',
+    icon: Info,
+    aliases: ['callout', 'note', 'info', 'alert', 'notice'],
+    group: 'advanced',
+    action: (editor: Editor) => {
+      editor.chain().focus().setCallout({ type: 'info' }).run()
+    },
+  },
+  {
+    name: 'Toggle',
+    description: 'Expandable content block',
+    icon: ChevronRight,
+    aliases: ['toggle', 'expand', 'collapse', 'details', 'accordion'],
+    group: 'advanced',
+    action: (editor: Editor) => {
+      editor.chain().focus().setToggle().run()
     },
   },
 ]

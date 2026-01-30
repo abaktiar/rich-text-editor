@@ -44,6 +44,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       plugins = [],
       minHeight = '200px',
       codeBlockMaxHeight,
+      calloutTypes,
     },
     ref
   ) {
@@ -71,7 +72,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
 
     const editor = useEditor({
       extensions: [
-        ...createExtensions({ placeholder }),
+        ...createExtensions({ placeholder, calloutTypes }),
         ...pluginExtensions,
         SlashCommands.configure({
           suggestion: {

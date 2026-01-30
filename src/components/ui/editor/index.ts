@@ -22,6 +22,7 @@ export type {
   FileAttachmentAttributes,
   FileDisplayMode,
   FileAlignment,
+  CalloutTypeConfig,
 } from './types'
 
 // Utilities
@@ -51,3 +52,7 @@ export type {
 } from './extensions/file-attachment'
 
 export { MentionExtension } from './extensions/mention-extension'
+
+// Callout
+export { Callout } from './extensions/callout'
+export { DEFAULT_CALLOUT_TYPES } from './callout'

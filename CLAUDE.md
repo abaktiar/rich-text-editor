@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Notion-style Rich Text Editor built with Tiptap, React 19, TypeScript, and Tailwind CSS 4 (via shadcn/ui design tokens).
+A Notion-style Rich Text Editor built with Tiptap 3.x, React 19, TypeScript, and Tailwind CSS 4 (via shadcn/ui design tokens).
 
 ## Commands
 
@@ -27,18 +27,35 @@ The editor uses a modular architecture with these main components:
 - **BubbleMenu** (`bubble-menu.tsx`) - Floating menu that appears on text selection.
 - **CommandMenu** (`command-menu.tsx`) - Slash command popup triggered by "/" at line start.
 - **CodeBlockComponent** (`code-block.tsx`) - Custom code block with language selector and copy button.
+- **TableControls** (`table-controls.tsx`) - Floating controls for table manipulation (add/delete rows/columns).
+- **FloatingLinkPopover** (`link-popover.tsx`) - Popover for editing links, triggered via toolbar or slash command.
+- **MentionList** (`mention-list.tsx`) - Suggestion list for @mentions.
 
 ### Extensions (`src/components/ui/editor/extensions/`)
 
 - `createExtensions()` in `index.ts` - Factory function that configures all Tiptap extensions
 - `EnhancedCodeBlock` - Custom code block extension with syntax highlighting via lowlight
 - `SlashCommands` - Extension that handles "/" command triggers
+- `tableExtensions` - Configures Table, TableRow, TableCell, TableHeader extensions
+- `MentionExtension` - Handles @mention functionality with suggestion plugin
+
+### Key Types (`src/components/ui/editor/types.ts`)
+
+- `RichTextEditorRef` - Imperative handle for programmatic control (getContent, setContent, focus, blur, clear)
+- `SlashCommand` - Interface for slash command definitions (name, description, icon, action, group)
+- `EditorPlugin` - Plugin interface for extending editor functionality
+- `EditorActionContext` - Context passed to slash commands for UI actions (e.g., opening link popover)
+
+### Default Slash Commands (`src/components/ui/editor/commands.ts`)
+
+Commands are organized into groups: basic, lists, formatting, advanced, media, custom. Each command has aliases for easier discovery.
 
 ### Key Behaviors
 
 - Slash commands only trigger at the start of a line (not mid-text)
 - Code blocks have an editable language dropdown in edit mode; read-only label in view mode
 - Extensions use named exports (not default) for Tiptap 3.x compatibility
+- Link commands use `EditorActionContext` to trigger the link popover UI
 
 ### Plugin System
 
