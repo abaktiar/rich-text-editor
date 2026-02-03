@@ -8,7 +8,7 @@ description: Use RichTextEditor and RichTextViewer components from @abaktiar/ric
 ## Installation
 
 ```bash
-npx shadcn@latest add https://abaktiar.github.io/rich-text-editor/r/rich-text-editor.json
+npx shadcn@latest add https://abaktiar.github.io/shadcn-rich-text-editor/r/rich-text-editor.json
 ```
 
 ## Basic Usage

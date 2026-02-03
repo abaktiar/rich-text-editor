@@ -175,7 +175,8 @@ export function MyEditor({ initialContent, onSave }: Props) {
 </ul>
 `
 
-const installCommand = 'npx shadcn@latest add https://abaktiar.github.io/rich-text-editor/r/rich-text-editor.json'
+const installCommand =
+  'npx shadcn@latest add https://abaktiar.github.io/shadcn-rich-text-editor/r/rich-text-editor.json';
 
 function CopyButton({ text, className }: { text: string; className?: string }) {
   const [copied, setCopied] = useState(false)
