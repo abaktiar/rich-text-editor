@@ -23,7 +23,7 @@ A modern, feature-rich text editor component for React. Built with **Tiptap 3.x*
 Install via the [shadcn registry](https://ui.shadcn.com/docs/registry):
 
 ```bash
-npx shadcn@latest add https://abaktiar.github.io/shadcn-rich-text-editor/r/rich-text-editor.json
+npx shadcn@latest add https://abaktiar.github.io/rich-text-editor/r/rich-text-editor.json
 ```
 
 This will install the component and all required dependencies.
