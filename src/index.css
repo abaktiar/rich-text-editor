@@ -273,3 +273,34 @@
 .dark ::selection {
   background: oklch(0.72 0.12 60 / 0.35);
 }
+
+/* Output Inspector animations */
+@keyframes tab-indicator {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.output-tab-active {
+  animation: tab-indicator 0.3s ease-out forwards;
+}
+
+/* Code display styling */
+.output-code-content {
+  tab-size: 2;
+  -moz-tab-size: 2;
+}
+
+/* Textarea focus glow */
+.import-textarea:focus {
+  box-shadow: 0 0 0 4px oklch(0.68 0.12 60 / 0.1);
+}
+
+.dark .import-textarea:focus {
+  box-shadow: 0 0 0 4px oklch(0.72 0.12 60 / 0.15);
+}

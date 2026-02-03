@@ -27,6 +27,14 @@ import {
   Sparkles,
   Layers,
   MousePointer2,
+  Braces,
+  FileText,
+  Download,
+  Upload,
+  Play,
+  Trash2,
+  FileCode,
+  Wand2,
 } from 'lucide-react'
 
 // Sample users for mention demo
@@ -193,6 +201,342 @@ function CopyButton({ text, className }: { text: string; className?: string }) {
   )
 }
 
+// Output Inspector Component
+type OutputFormat = 'html' | 'json' | 'text'
+type InspectorMode = 'output' | 'import'
+
+function OutputInspector({
+  content,
+  onImport,
+}: {
+  content: EditorContent
+  onImport: (content: string, format: 'html' | 'json') => void
+}) {
+  const [activeTab, setActiveTab] = useState<OutputFormat>('html')
+  const [inspectorMode, setInspectorMode] = useState<InspectorMode>('output')
+  const [importText, setImportText] = useState('')
+  const [detectedFormat, setDetectedFormat] = useState<'html' | 'json' | 'unknown'>('unknown')
+
+  // Detect format when import text changes
+  useEffect(() => {
+    if (!importText.trim()) {
+      setDetectedFormat('unknown')
+      return
+    }
+    const trimmed = importText.trim()
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      try {
+        JSON.parse(trimmed)
+        setDetectedFormat('json')
+      } catch {
+        setDetectedFormat('unknown')
+      }
+    } else if (trimmed.startsWith('<') || trimmed.includes('</')) {
+      setDetectedFormat('html')
+    } else {
+      setDetectedFormat('unknown')
+    }
+  }, [importText])
+
+  const getOutputContent = (format: OutputFormat): string => {
+    switch (format) {
+      case 'html':
+        return content.html ?? ''
+      case 'json':
+        return content.json ? JSON.stringify(content.json, null, 2) : ''
+      case 'text':
+        return content.text ?? ''
+    }
+  }
+
+  const getStats = (format: OutputFormat) => {
+    const text = getOutputContent(format)
+    const chars = text.length
+    const lines = text.split('\n').length
+    return { chars, lines }
+  }
+
+  const handleRender = () => {
+    if (importText.trim()) {
+      const format = detectedFormat === 'json' ? 'json' : 'html'
+      onImport(importText.trim(), format)
+      setInspectorMode('output')
+      setImportText('')
+    }
+  }
+
+  const tabs = [
+    { id: 'html' as OutputFormat, label: 'HTML', icon: Code },
+    { id: 'json' as OutputFormat, label: 'JSON', icon: Braces },
+    { id: 'text' as OutputFormat, label: 'Text', icon: FileText },
+  ]
+
+  return (
+    <section className='py-16 px-6'>
+      <div className='max-w-5xl mx-auto'>
+        {/* Section Header */}
+        <div className='text-center mb-10'>
+          <h2 className='text-3xl sm:text-4xl font-bold mb-4 font-[family-name:var(--font-display)]'>
+            Output Inspector
+          </h2>
+          <p className='text-muted-foreground text-lg max-w-2xl mx-auto'>
+            See exactly what your editor outputs in real-time. Copy the format you need, or import content to render.
+          </p>
+        </div>
+
+        {/* Mode Toggle */}
+        <div className='flex justify-center mb-8'>
+          <div className='inline-flex items-center gap-1 p-1.5 rounded-xl bg-muted/50 border border-border/50 backdrop-blur-sm'>
+            <button
+              onClick={() => setInspectorMode('output')}
+              className={cn(
+                'flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300',
+                inspectorMode === 'output'
+                  ? 'bg-background shadow-md text-foreground'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+              )}
+            >
+              <Download className='w-4 h-4' />
+              Output
+            </button>
+            <button
+              onClick={() => setInspectorMode('import')}
+              className={cn(
+                'flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300',
+                inspectorMode === 'import'
+                  ? 'bg-background shadow-md text-foreground'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+              )}
+            >
+              <Upload className='w-4 h-4' />
+              Import
+            </button>
+          </div>
+        </div>
+
+        {/* Main Container */}
+        <div className='relative group'>
+          {/* Glow effect */}
+          <div className='absolute -inset-3 bg-gradient-to-r from-demo-warm/10 via-transparent to-demo-warm/10 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700' />
+
+          {/* Glass card */}
+          <div className='relative bg-card/80 backdrop-blur-xl border border-border/50 rounded-2xl shadow-xl shadow-foreground/5 overflow-hidden'>
+            {inspectorMode === 'output' ? (
+              <>
+                {/* Tab Bar */}
+                <div className='flex items-center justify-between border-b border-border/50 bg-muted/30'>
+                  <div className='flex'>
+                    {tabs.map((tab, index) => {
+                      const stats = getStats(tab.id)
+                      const Icon = tab.icon
+                      const isActive = activeTab === tab.id
+
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id)}
+                          className={cn(
+                            'relative flex items-center gap-2 px-5 py-4 text-sm font-medium transition-all duration-300',
+                            isActive
+                              ? 'text-foreground'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
+                            index > 0 && 'border-l border-border/30'
+                          )}
+                        >
+                          <Icon className={cn('w-4 h-4 transition-colors', isActive && 'text-demo-warm')} />
+                          <span>{tab.label}</span>
+                          <span
+                            className={cn(
+                              'px-2 py-0.5 rounded-full text-xs transition-colors',
+                              isActive
+                                ? 'bg-demo-warm/20 text-demo-warm'
+                                : 'bg-muted text-muted-foreground'
+                            )}
+                          >
+                            {stats.chars.toLocaleString()}
+                          </span>
+                          {/* Active indicator */}
+                          {isActive && (
+                            <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-demo-warm to-transparent' />
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  {/* Copy button */}
+                  <div className='px-4'>
+                    <CopyButton text={getOutputContent(activeTab)} className='hover:bg-demo-warm/10' />
+                  </div>
+                </div>
+
+                {/* Content Area */}
+                <div className='relative'>
+                  {/* Line count gutter */}
+                  <div className='absolute left-0 top-0 bottom-0 w-12 bg-muted/20 border-r border-border/30 flex flex-col items-end pr-2 pt-4 text-xs text-muted-foreground/50 font-mono select-none overflow-hidden'>
+                    {getOutputContent(activeTab)
+                      .split('\n')
+                      .slice(0, 100)
+                      .map((_, i) => (
+                        <div key={i} className='h-5 leading-5'>
+                          {i + 1}
+                        </div>
+                      ))}
+                  </div>
+
+                  {/* Code content */}
+                  <div className='pl-14 pr-4 py-4 overflow-auto max-h-[400px] min-h-[200px]'>
+                    <pre className='text-sm font-mono leading-5 whitespace-pre-wrap break-all'>
+                      <code className='text-foreground/90'>{getOutputContent(activeTab)}</code>
+                    </pre>
+                  </div>
+
+                  {/* Fade overlay at bottom */}
+                  <div className='absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-card/80 to-transparent pointer-events-none' />
+                </div>
+
+                {/* Stats Footer */}
+                <div className='px-5 py-3 border-t border-border/30 bg-muted/20 flex items-center justify-between text-xs text-muted-foreground'>
+                  <div className='flex items-center gap-4'>
+                    <span className='flex items-center gap-1.5'>
+                      <FileCode className='w-3.5 h-3.5' />
+                      {getStats(activeTab).lines.toLocaleString()} lines
+                    </span>
+                    <span className='flex items-center gap-1.5'>
+                      <Type className='w-3.5 h-3.5' />
+                      {getStats(activeTab).chars.toLocaleString()} characters
+                    </span>
+                  </div>
+                  <span className='text-muted-foreground/60'>Live output from editor</span>
+                </div>
+              </>
+            ) : (
+              /* Import Mode */
+              <div className='p-6'>
+                {/* Import Header */}
+                <div className='flex items-center justify-between mb-4'>
+                  <div className='flex items-center gap-3'>
+                    <div className='w-10 h-10 rounded-xl bg-gradient-to-br from-demo-warm/20 to-demo-warm/5 flex items-center justify-center'>
+                      <Wand2 className='w-5 h-5 text-demo-warm' />
+                    </div>
+                    <div>
+                      <h3 className='font-semibold text-foreground'>Import Content</h3>
+                      <p className='text-sm text-muted-foreground'>Paste HTML or JSON to render in the viewer</p>
+                    </div>
+                  </div>
+
+                  {/* Format detector badge */}
+                  {importText.trim() && (
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300',
+                        detectedFormat === 'html' && 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
+                        detectedFormat === 'json' && 'bg-purple-500/15 text-purple-600 dark:text-purple-400',
+                        detectedFormat === 'unknown' && 'bg-muted text-muted-foreground'
+                      )}
+                    >
+                      {detectedFormat === 'html' && <Code className='w-3.5 h-3.5' />}
+                      {detectedFormat === 'json' && <Braces className='w-3.5 h-3.5' />}
+                      {detectedFormat === 'unknown' && <FileText className='w-3.5 h-3.5' />}
+                      {detectedFormat === 'html' && 'HTML detected'}
+                      {detectedFormat === 'json' && 'JSON detected'}
+                      {detectedFormat === 'unknown' && 'Format unknown'}
+                    </div>
+                  )}
+                </div>
+
+                {/* Textarea */}
+                <div className='relative mb-4'>
+                  <textarea
+                    value={importText}
+                    onChange={(e) => setImportText(e.target.value)}
+                    placeholder='Paste your HTML or JSON content here...'
+                    className={cn(
+                      'w-full h-64 px-4 py-3 rounded-xl border bg-background/50 text-sm font-mono resize-none transition-all duration-300',
+                      'placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-demo-warm/50 focus:border-demo-warm/50',
+                      'border-border/50 hover:border-border'
+                    )}
+                  />
+                  {/* Character count */}
+                  <div className='absolute bottom-3 right-3 text-xs text-muted-foreground/50'>
+                    {importText.length.toLocaleString()} chars
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className='flex items-center gap-3'>
+                  <Button
+                    onClick={handleRender}
+                    disabled={!importText.trim()}
+                    className='flex-1 gap-2 h-11'
+                  >
+                    <Play className='w-4 h-4' />
+                    Render in Viewer
+                  </Button>
+                  <Button
+                    variant='outline'
+                    onClick={() => setImportText('')}
+                    disabled={!importText}
+                    className='gap-2 h-11 px-6'
+                  >
+                    <Trash2 className='w-4 h-4' />
+                    Clear
+                  </Button>
+                </div>
+
+                {/* Example snippets */}
+                <div className='mt-6 pt-6 border-t border-border/30'>
+                  <p className='text-xs text-muted-foreground mb-3'>Quick examples:</p>
+                  <div className='flex flex-wrap gap-2'>
+                    <button
+                      onClick={() =>
+                        setImportText('<h1>Hello World</h1>\n<p>This is a <strong>test</strong> paragraph.</p>')
+                      }
+                      className='px-3 py-1.5 rounded-lg bg-muted/50 hover:bg-muted text-xs text-muted-foreground hover:text-foreground transition-colors'
+                    >
+                      Simple HTML
+                    </button>
+                    <button
+                      onClick={() =>
+                        setImportText(
+                          JSON.stringify(
+                            {
+                              type: 'doc',
+                              content: [
+                                { type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: 'Hello' }] },
+                                { type: 'paragraph', content: [{ type: 'text', text: 'World' }] },
+                              ],
+                            },
+                            null,
+                            2
+                          )
+                        )
+                      }
+                      className='px-3 py-1.5 rounded-lg bg-muted/50 hover:bg-muted text-xs text-muted-foreground hover:text-foreground transition-colors'
+                    >
+                      Tiptap JSON
+                    </button>
+                    <button
+                      onClick={() =>
+                        setImportText(
+                          '<ul>\n  <li>First item</li>\n  <li>Second item</li>\n  <li>Third item</li>\n</ul>'
+                        )
+                      }
+                      className='px-3 py-1.5 rounded-lg bg-muted/50 hover:bg-muted text-xs text-muted-foreground hover:text-foreground transition-colors'
+                    >
+                      List HTML
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function FeatureCard({
   icon: Icon,
   title,
@@ -245,11 +589,37 @@ export function EditorDemo() {
   const [isDark, setIsDark] = useState(true)
   const [mode, setMode] = useState<'edit' | 'view'>('edit')
   const [content, setContent] = useState<EditorContent>({ html: demoContent })
+  const [isEditorReady, setIsEditorReady] = useState(false)
   const editorRef = useRef<RichTextEditorRef>(null)
 
   // Set dark mode on mount
   useEffect(() => {
     document.documentElement.classList.add('dark')
+  }, [])
+
+  // Sync all content formats when editor initializes
+  useEffect(() => {
+    if (isEditorReady && editorRef.current) {
+      const editor = editorRef.current.getEditor()
+      if (editor) {
+        setContent({
+          html: editor.getHTML(),
+          json: editor.getJSON(),
+          text: editor.getText(),
+        })
+      }
+    }
+  }, [isEditorReady])
+
+  // Check for editor ready state
+  useEffect(() => {
+    const checkEditor = setInterval(() => {
+      if (editorRef.current?.getEditor()) {
+        setIsEditorReady(true)
+        clearInterval(checkEditor)
+      }
+    }, 50)
+    return () => clearInterval(checkEditor)
   }, [])
 
   // Create file upload plugin
@@ -556,6 +926,27 @@ export function EditorDemo() {
           </p>
         </div>
       </section>
+
+      {/* Output Inspector */}
+      <OutputInspector
+        content={content}
+        onImport={(importedContent, format) => {
+          if (format === 'json') {
+            try {
+              const parsed = JSON.parse(importedContent)
+              setContent({ html: undefined, json: parsed, text: undefined })
+              // Update editor with JSON content
+              editorRef.current?.setContent(parsed)
+            } catch {
+              // Fallback to HTML if JSON parsing fails
+              setContent({ html: importedContent, json: undefined, text: undefined })
+            }
+          } else {
+            setContent({ html: importedContent, json: undefined, text: undefined })
+          }
+          setMode('view')
+        }}
+      />
 
       {/* Code Example */}
       <section className='py-20 px-6 bg-muted/30'>
