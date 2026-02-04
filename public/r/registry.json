@@ -9,6 +9,7 @@
       "title": "Rich Text Editor",
       "description": "A modern, feature-rich text editor with slash commands, code blocks, tables, @mentions, callouts, toggles, and file attachments. Built with Tiptap 3.x and React 19.",
       "dependencies": [
+        "@tanstack/react-virtual",
         "@tiptap/extension-bubble-menu",
         "@tiptap/extension-code-block-lowlight",
         "@tiptap/extension-color",
@@ -31,6 +32,7 @@
         "@tiptap/starter-kit",
         "@tiptap/suggestion",
         "lowlight",
+        "react-pdf",
         "tippy.js"
       ],
       "registryDependencies": ["button", "popover"],
