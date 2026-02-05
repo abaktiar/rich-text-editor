@@ -27,6 +27,7 @@ import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
 
+
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
@@ -193,9 +194,16 @@ function detectDelimiter(content: string): ',' | ';' | '\t' | '|' {
   return ','
 }
 
-function parseCSV(text: string, delimiter: string, stripWhitespace: boolean): string[][] {
-  const lines = text.split('\n').filter((line) => line.trim())
-  return lines.map((line) => {
+// Max rows to parse for large CSVs to avoid memory issues
+const CSV_MAX_ROWS = 100_000
+
+function parseCSV(text: string, delimiter: string, stripWhitespace: boolean): { data: string[][]; truncated: boolean; totalLines: number } {
+  const lines = text.split('\n').filter(line => line.trim())
+  const totalLines = lines.length
+  const truncated = totalLines > CSV_MAX_ROWS
+  const linesToParse = truncated ? lines.slice(0, CSV_MAX_ROWS) : lines
+
+  const data = linesToParse.map(line => {
     const result: string[] = []
     let current = ''
     let inQuotes = false
@@ -214,6 +222,8 @@ function parseCSV(text: string, delimiter: string, stripWhitespace: boolean): st
     result.push(stripWhitespace ? current.trim() : current)
     return result
   })
+
+  return { data, truncated, totalLines }
 }
 
 // ============================================
@@ -241,10 +251,11 @@ function CsvViewer({ content, options }: CsvViewerProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
   const delimiter = opts.delimiter === 'auto' ? detectDelimiter(content) : opts.delimiter
-  const data = useMemo(
+  const parsed = useMemo(
     () => parseCSV(content, delimiter, opts.stripWhitespace),
     [content, delimiter, opts.stripWhitespace],
   )
+  const { data, truncated, totalLines } = parsed
 
   const headers = useMemo(() => {
     if (data.length === 0) return []
@@ -269,9 +280,10 @@ function CsvViewer({ content, options }: CsvViewerProps) {
   }, [opts.highlightColumns, headers])
 
   // Calculate column widths based on content
-  const columnWidths = useMemo(() => {
+  const columnWidths = useMemo(;() => {
     if (data.length === 0) return []
-    const maxCols = Math.max(...data.map((row) => row.length))
+    // Use reduce instead of Math.max(...spread) to avoid call stack overflow on large datasets
+    const maxCols = data.reduce((max, row) => Math.max(max, row.length), 0)
     const widths: number[] = []
 
     for (let col = 0; col < maxCols; col++) {
@@ -312,6 +324,14 @@ function CsvViewer({ content, options }: CsvViewerProps) {
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
+      {/* Truncation warning */}
+      {truncated && (
+        <div className="px-4 py-1.5 border-b border-border bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs text-center shrink-0">
+          Showing first {CSV_MAX_ROWS.toLocaleString()} of {totalLines.toLocaleString()} rows. Download the file to view
+          all data.
+        </div>
+      )}
+
       {/* Toolbar */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30 shrink-0">
         <div className="flex items-center gap-3">
