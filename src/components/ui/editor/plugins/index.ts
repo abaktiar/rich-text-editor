@@ -9,7 +9,4 @@ export {
   type PdfPreviewOptions,
 } from './file-upload'
 
-export {
-  createMentionPlugin,
-  type MentionPluginOptions,
-} from './mention'
+export { createMentionPlugin, type MentionPluginOptions } from './mention'

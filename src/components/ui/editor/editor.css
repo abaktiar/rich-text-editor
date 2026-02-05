@@ -123,7 +123,7 @@
   margin-top: 0.25rem;
 }
 
-.tiptap .editor-task-item > label input[type="checkbox"] {
+.tiptap .editor-task-item > label input[type='checkbox'] {
   width: 1rem;
   height: 1rem;
   accent-color: var(--primary);
@@ -135,7 +135,7 @@
   flex: 1;
 }
 
-.tiptap .editor-task-item[data-checked="true"] > div {
+.tiptap .editor-task-item[data-checked='true'] > div {
   text-decoration: line-through;
   opacity: 0.6;
 }
@@ -154,7 +154,7 @@
   background-color: var(--muted);
   border-radius: 0.25rem;
   padding: 0.2rem 0.4rem;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
   font-size: 0.875em;
   color: var(--foreground);
 }
@@ -167,7 +167,7 @@
   padding: 1rem;
   margin: 1rem 0;
   overflow-x: auto;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.6;
 }
@@ -323,7 +323,7 @@
 }
 
 /* Focus styling for read-only mode disabled */
-.rich-text-editor[data-editable="false"] .tiptap {
+.rich-text-editor[data-editable='false'] .tiptap {
   cursor: default;
 }
 
@@ -554,7 +554,9 @@
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .code-block-language-button:hover {
@@ -618,7 +620,9 @@
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .code-block-copy-button:hover {
@@ -640,7 +644,7 @@
   overflow-x: auto;
   overflow-y: auto;
   max-height: var(--code-block-max-height, none);
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.6;
 }
@@ -748,12 +752,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(var(--primary), 0.1) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(var(--primary), 0.1) 50%, transparent 100%);
   animation: file-attachment-shimmer 1.5s infinite;
 }
 
@@ -794,7 +793,9 @@
   border-right: 2px solid var(--primary);
   border-bottom: 2px solid var(--primary);
   border-radius: 0 0 3px 0;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease;
   box-shadow: 1px 1px 2px hsl(var(--background) / 0.8);
 }
 
@@ -960,12 +961,12 @@
 }
 
 /* Table wrapper alignment */
-.tiptap .tableWrapper[data-alignment="center"] {
+.tiptap .tableWrapper[data-alignment='center'] {
   margin-left: auto;
   margin-right: auto;
 }
 
-.tiptap .tableWrapper[data-alignment="right"] {
+.tiptap .tableWrapper[data-alignment='right'] {
   margin-left: auto;
   margin-right: 0;
 }
@@ -1045,11 +1046,11 @@
 }
 
 /* Hover effect on cells in edit mode */
-.rich-text-editor[data-editable="true"] .tiptap td:hover {
+.rich-text-editor[data-editable='true'] .tiptap td:hover {
   background-color: hsl(var(--accent) / 0.5);
 }
 
-.rich-text-editor[data-editable="true"] .tiptap th:hover {
+.rich-text-editor[data-editable='true'] .tiptap th:hover {
   background-color: color-mix(in oklch, var(--muted) 100%, var(--foreground) 4%);
 }
 
@@ -1083,7 +1084,7 @@
   background-color: var(--background);
 }
 
-.dark .rich-text-editor[data-editable="true"] .tiptap th:hover {
+.dark .rich-text-editor[data-editable='true'] .tiptap th:hover {
   background-color: color-mix(in oklch, var(--muted) 100%, var(--foreground) 6%);
 }
 
@@ -1232,7 +1233,9 @@
   border-right: 2px solid var(--primary);
   border-bottom: 2px solid var(--primary);
   border-radius: 0 0 3px 0;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .table-resize-handle:hover .table-resize-handle-inner {
@@ -1543,7 +1546,9 @@
   border-radius: 0.25rem;
   cursor: pointer;
   color: var(--muted-foreground);
-  transition: background-color 0.1s ease, color 0.1s ease;
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease;
   flex-shrink: 0;
 }
 
@@ -1617,4 +1622,3 @@
 .toggle-content-inner p {
   margin: 0;
 }
-

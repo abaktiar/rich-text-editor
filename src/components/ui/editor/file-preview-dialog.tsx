@@ -126,7 +126,9 @@ function formatFileSize(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
 }
 
-function getFileIconType(mimeType: string): 'image' | 'video' | 'text' | 'spreadsheet' | 'archive' | 'code' | 'generic' {
+function getFileIconType(
+  mimeType: string,
+): 'image' | 'video' | 'text' | 'spreadsheet' | 'archive' | 'code' | 'generic' {
   if (mimeType.startsWith('image/')) return 'image'
   if (mimeType.startsWith('video/')) return 'video'
   if (mimeType.startsWith('text/') || mimeType.includes('document')) return 'text'
@@ -192,8 +194,8 @@ function detectDelimiter(content: string): ',' | ';' | '\t' | '|' {
 }
 
 function parseCSV(text: string, delimiter: string, stripWhitespace: boolean): string[][] {
-  const lines = text.split('\n').filter(line => line.trim())
-  return lines.map(line => {
+  const lines = text.split('\n').filter((line) => line.trim())
+  return lines.map((line) => {
     const result: string[] = []
     let current = ''
     let inQuotes = false
@@ -239,7 +241,10 @@ function CsvViewer({ content, options }: CsvViewerProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
   const delimiter = opts.delimiter === 'auto' ? detectDelimiter(content) : opts.delimiter
-  const data = useMemo(() => parseCSV(content, delimiter, opts.stripWhitespace), [content, delimiter, opts.stripWhitespace])
+  const data = useMemo(
+    () => parseCSV(content, delimiter, opts.stripWhitespace),
+    [content, delimiter, opts.stripWhitespace],
+  )
 
   const headers = useMemo(() => {
     if (data.length === 0) return []
@@ -254,17 +259,19 @@ function CsvViewer({ content, options }: CsvViewerProps) {
   const highlightIndices = useMemo(() => {
     if (!opts.highlightColumns || !headers.length) return new Set<number>()
     return new Set(
-      opts.highlightColumns.map(col => {
-        if (typeof col === 'number') return col
-        return headers.indexOf(col)
-      }).filter(i => i >= 0)
+      opts.highlightColumns
+        .map((col) => {
+          if (typeof col === 'number') return col
+          return headers.indexOf(col)
+        })
+        .filter((i) => i >= 0),
     )
   }, [opts.highlightColumns, headers])
 
   // Calculate column widths based on content
   const columnWidths = useMemo(() => {
     if (data.length === 0) return []
-    const maxCols = Math.max(...data.map(row => row.length))
+    const maxCols = Math.max(...data.map((row) => row.length))
     const widths: number[] = []
 
     for (let col = 0; col < maxCols; col++) {
@@ -324,17 +331,10 @@ function CsvViewer({ content, options }: CsvViewerProps) {
       </div>
 
       {/* Virtualized Table */}
-      <div
-        ref={parentRef}
-        className="flex-1 overflow-auto"
-        style={{ minHeight: 0 }}
-      >
+      <div ref={parentRef} className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
         <div style={{ width: totalWidth, minWidth: '100%' }}>
           {/* Sticky Header */}
-          <div
-            className="sticky top-0 z-20 flex bg-muted border-b border-border"
-            style={{ width: totalWidth }}
-          >
+          <div className="sticky top-0 z-20 flex bg-muted border-b border-border" style={{ width: totalWidth }}>
             {opts.showRowNumbers && (
               <div className="sticky left-0 z-30 flex-shrink-0 w-14 px-3 py-2 text-left text-xs font-semibold text-muted-foreground border-r border-border bg-muted">
                 #
@@ -344,8 +344,8 @@ function CsvViewer({ content, options }: CsvViewerProps) {
               <div
                 key={i}
                 className={cn(
-                  "flex-shrink-0 px-3 py-2 text-left text-xs font-semibold border-r border-border last:border-r-0 bg-muted truncate",
-                  highlightIndices.has(i) && "bg-primary/10"
+                  'flex-shrink-0 px-3 py-2 text-left text-xs font-semibold border-r border-border last:border-r-0 bg-muted truncate',
+                  highlightIndices.has(i) && 'bg-primary/10',
                 )}
                 style={{ width: columnWidths[i] }}
                 title={header}
@@ -368,8 +368,8 @@ function CsvViewer({ content, options }: CsvViewerProps) {
                 <div
                   key={virtualRow.index}
                   className={cn(
-                    "absolute left-0 w-full flex border-b border-border hover:bg-muted/50",
-                    opts.alternateRowColors && virtualRow.index % 2 === 1 && "bg-muted/20"
+                    'absolute left-0 w-full flex border-b border-border hover:bg-muted/50',
+                    opts.alternateRowColors && virtualRow.index % 2 === 1 && 'bg-muted/20',
                   )}
                   style={{
                     height: `${virtualRow.size}px`,
@@ -390,13 +390,17 @@ function CsvViewer({ content, options }: CsvViewerProps) {
                       <div
                         key={cellIdx}
                         className={cn(
-                          "flex-shrink-0 px-3 py-1.5 text-sm border-r border-border last:border-r-0 truncate flex items-center",
-                          highlightIndices.has(cellIdx) && "bg-primary/5"
+                          'flex-shrink-0 px-3 py-1.5 text-sm border-r border-border last:border-r-0 truncate flex items-center',
+                          highlightIndices.has(cellIdx) && 'bg-primary/5',
                         )}
                         style={{ width: columnWidths[cellIdx] }}
                         title={value}
                       >
-                        {formattedValue || <span className="text-muted-foreground/50 italic">{opts.emptyValuePlaceholder || 'empty'}</span>}
+                        {formattedValue || (
+                          <span className="text-muted-foreground/50 italic">
+                            {opts.emptyValuePlaceholder || 'empty'}
+                          </span>
+                        )}
                       </div>
                     )
                   })}
@@ -458,9 +462,7 @@ function JsonViewer({ content, options }: JsonViewerProps) {
           ) : (
             <span className="text-xs text-green-600 dark:text-green-400">Valid JSON</span>
           )}
-          <span className="text-xs text-muted-foreground">
-            {lines.length.toLocaleString()} lines
-          </span>
+          <span className="text-xs text-muted-foreground">{lines.length.toLocaleString()} lines</span>
         </div>
       </div>
 
@@ -498,10 +500,12 @@ function JsonViewer({ content, options }: JsonViewerProps) {
                   </div>
                 )}
                 {/* Line Content */}
-                <div className={cn(
-                  "flex-1 px-3 overflow-x-auto flex items-center",
-                  opts.wordWrap ? "whitespace-pre-wrap break-words" : "whitespace-pre"
-                )}>
+                <div
+                  className={cn(
+                    'flex-1 px-3 overflow-x-auto flex items-center',
+                    opts.wordWrap ? 'whitespace-pre-wrap break-words' : 'whitespace-pre',
+                  )}
+                >
                   {line || ' '}
                 </div>
               </div>
@@ -545,12 +549,8 @@ function TextViewer({ content, fileName, options }: TextViewerProps) {
     <div className="h-full flex flex-col overflow-hidden">
       {/* Toolbar */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30 shrink-0">
-        <span className="text-xs text-muted-foreground">
-          {lines.length.toLocaleString()} lines
-        </span>
-        <span className="text-xs text-muted-foreground uppercase">
-          {ext || 'txt'}
-        </span>
+        <span className="text-xs text-muted-foreground">{lines.length.toLocaleString()} lines</span>
+        <span className="text-xs text-muted-foreground uppercase">{ext || 'txt'}</span>
       </div>
 
       {/* Virtualized Content */}
@@ -587,10 +587,12 @@ function TextViewer({ content, fileName, options }: TextViewerProps) {
                   </div>
                 )}
                 {/* Line Content */}
-                <div className={cn(
-                  "flex-1 px-3 py-0.5 overflow-x-auto",
-                  opts.wordWrap ? "whitespace-pre-wrap break-words" : "whitespace-pre"
-                )}>
+                <div
+                  className={cn(
+                    'flex-1 px-3 py-0.5 overflow-x-auto',
+                    opts.wordWrap ? 'whitespace-pre-wrap break-words' : 'whitespace-pre',
+                  )}
+                >
                   {line || ' '}
                 </div>
               </div>
@@ -622,9 +624,9 @@ function ImageViewer({ src, name, options }: ImageViewerProps) {
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 5))
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.25))
-  const handleRotate = () => setRotation(prev => (prev + 90) % 360)
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 5))
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.25, 0.25))
+  const handleRotate = () => setRotation((prev) => (prev + 90) % 360)
   const handleReset = () => {
     setZoom(1)
     setRotation(0)
@@ -654,12 +656,15 @@ function ImageViewer({ src, name, options }: ImageViewerProps) {
 
   const handleMouseUp = () => setIsDragging(false)
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (!opts.allowZoom) return
-    e.preventDefault()
-    const delta = e.deltaY > 0 ? -0.1 : 0.1
-    setZoom(prev => Math.max(0.25, Math.min(5, prev + delta)))
-  }, [opts.allowZoom])
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      if (!opts.allowZoom) return
+      e.preventDefault()
+      const delta = e.deltaY > 0 ? -0.1 : 0.1
+      setZoom((prev) => Math.max(0.25, Math.min(5, prev + delta)))
+    },
+    [opts.allowZoom],
+  )
 
   const backgroundClass = useMemo(() => {
     switch (opts.transparentBackground) {
@@ -702,10 +707,10 @@ function ImageViewer({ src, name, options }: ImageViewerProps) {
       <div
         ref={containerRef}
         className={cn(
-          "flex-1 overflow-hidden flex items-center justify-center",
+          'flex-1 overflow-hidden flex items-center justify-center',
           backgroundClass,
           zoom > 1 ? 'cursor-grab' : 'cursor-default',
-          isDragging && 'cursor-grabbing'
+          isDragging && 'cursor-grabbing',
         )}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -730,7 +735,9 @@ function ImageViewer({ src, name, options }: ImageViewerProps) {
       {/* Metadata */}
       {opts.showMetadata && dimensions && (
         <div className="flex items-center justify-center gap-4 py-2 text-xs text-muted-foreground bg-background/50 border-t border-border">
-          <span>{dimensions.width} × {dimensions.height} px</span>
+          <span>
+            {dimensions.width} × {dimensions.height} px
+          </span>
         </div>
       )}
     </div>
@@ -783,15 +790,18 @@ function PdfViewer({ src }: PdfViewerProps) {
   const handleZoomOut = () => setScale((prev) => Math.max(prev - 0.25, 0.5))
   const handleFitWidth = () => setScale(1)
 
-  const goToPage = useCallback((page: number) => {
-    const validPage = Math.max(1, Math.min(page, numPages))
-    setCurrentPage(validPage)
+  const goToPage = useCallback(
+    (page: number) => {
+      const validPage = Math.max(1, Math.min(page, numPages))
+      setCurrentPage(validPage)
 
-    const pageElement = pageRefs.current.get(validPage)
-    if (pageElement) {
-      pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }, [numPages])
+      const pageElement = pageRefs.current.get(validPage)
+      if (pageElement) {
+        pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    },
+    [numPages],
+  )
 
   const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10)
@@ -814,12 +824,7 @@ function PdfViewer({ src }: PdfViewerProps) {
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30 shrink-0">
         <div className="flex items-center gap-2">
           {/* Page Navigation */}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage <= 1}
-          >
+          <Button variant="ghost" size="icon-sm" onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
@@ -851,9 +856,7 @@ function PdfViewer({ src }: PdfViewerProps) {
             <ZoomOut className="h-4 w-4" />
           </Button>
 
-          <span className="text-xs text-muted-foreground min-w-[50px] text-center">
-            {Math.round(scale * 100)}%
-          </span>
+          <span className="text-xs text-muted-foreground min-w-[50px] text-center">{Math.round(scale * 100)}%</span>
 
           <Button variant="ghost" size="icon-sm" onClick={handleZoomIn}>
             <ZoomIn className="h-4 w-4" />
@@ -868,11 +871,7 @@ function PdfViewer({ src }: PdfViewerProps) {
       </div>
 
       {/* PDF Content */}
-      <div
-        ref={containerRef}
-        className="flex-1 overflow-auto bg-muted/20"
-        style={{ minHeight: 0 }}
-      >
+      <div ref={containerRef} className="flex-1 overflow-auto bg-muted/20" style={{ minHeight: 0 }}>
         {error ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center space-y-4">
@@ -901,27 +900,28 @@ function PdfViewer({ src }: PdfViewerProps) {
               }
               className="flex flex-col items-center gap-4"
             >
-              {!isLoading && Array.from({ length: numPages }, (_, index) => {
-                const pageNum = index + 1
-                return (
-                  <div
-                    key={pageNum}
-                    ref={(el) => setPageRef(pageNum, el)}
-                    className={cn(
-                      "shadow-lg rounded-sm overflow-hidden bg-white scroll-mt-6",
-                      currentPage === pageNum && "ring-2 ring-primary"
-                    )}
-                    onClick={() => setCurrentPage(pageNum)}
-                  >
-                    <Page
-                      pageNumber={pageNum}
-                      width={containerWidth * scale}
-                      renderTextLayer={true}
-                      renderAnnotationLayer={true}
-                    />
-                  </div>
-                )
-              })}
+              {!isLoading &&
+                Array.from({ length: numPages }, (_, index) => {
+                  const pageNum = index + 1
+                  return (
+                    <div
+                      key={pageNum}
+                      ref={(el) => setPageRef(pageNum, el)}
+                      className={cn(
+                        'shadow-lg rounded-sm overflow-hidden bg-white scroll-mt-6',
+                        currentPage === pageNum && 'ring-2 ring-primary',
+                      )}
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      <Page
+                        pageNumber={pageNum}
+                        width={containerWidth * scale}
+                        renderTextLayer={true}
+                        renderAnnotationLayer={true}
+                      />
+                    </div>
+                  )
+                })}
             </Document>
           </div>
         )}
@@ -937,12 +937,7 @@ function PdfViewer({ src }: PdfViewerProps) {
 function VideoPreview({ src, name }: { src: string; name: string }) {
   return (
     <div className="flex-1 flex items-center justify-center p-4 bg-black">
-      <video
-        src={src}
-        controls
-        autoPlay={false}
-        className="max-w-full max-h-full rounded"
-      >
+      <video src={src} controls autoPlay={false} className="max-w-full max-h-full rounded">
         Your browser does not support video playback for {name}.
       </video>
     </div>
@@ -964,12 +959,8 @@ function NoPreview({ mimeType, name }: { mimeType: string; name: string }) {
       </div>
       <div>
         <h3 className="text-lg font-medium mb-1">{name}</h3>
-        <p className="text-muted-foreground text-sm">
-          Preview not available for this file type
-        </p>
-        <p className="text-muted-foreground text-xs mt-1">
-          {mimeType || 'Unknown type'}
-        </p>
+        <p className="text-muted-foreground text-sm">Preview not available for this file type</p>
+        <p className="text-muted-foreground text-xs mt-1">{mimeType || 'Unknown type'}</p>
       </div>
     </div>
   )
@@ -1205,17 +1196,11 @@ export function FilePreviewDialog({
       case 'pdf':
         return <PdfViewer src={src} />
       case 'csv':
-        return textContent ? (
-          <CsvViewer content={textContent} options={previewOptions?.csv} />
-        ) : null
+        return textContent ? <CsvViewer content={textContent} options={previewOptions?.csv} /> : null
       case 'json':
-        return textContent ? (
-          <JsonViewer content={textContent} options={previewOptions?.text} />
-        ) : null
+        return textContent ? <JsonViewer content={textContent} options={previewOptions?.text} /> : null
       case 'text':
-        return textContent ? (
-          <TextViewer content={textContent} fileName={name} options={previewOptions?.text} />
-        ) : null
+        return textContent ? <TextViewer content={textContent} fileName={name} options={previewOptions?.text} /> : null
       default:
         return <NoPreview mimeType={mimeType} name={name} />
     }
@@ -1255,14 +1240,16 @@ export function FilePreviewDialog({
         </div>
 
         {/* Content */}
-        <div className={cn(
-          "flex-1 overflow-hidden bg-background flex flex-col",
-          fileCategory === 'image' && "bg-muted/50"
-        )}>
+        <div
+          className={cn(
+            'flex-1 overflow-hidden bg-background flex flex-col',
+            fileCategory === 'image' && 'bg-muted/50',
+          )}
+        >
           {renderPreview()}
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   )
 }

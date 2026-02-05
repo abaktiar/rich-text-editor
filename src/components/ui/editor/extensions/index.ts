@@ -30,7 +30,7 @@ export function createExtensions(options: ExtensionOptions = {}) {
       },
     }),
     Placeholder.configure({
-      placeholder: options.placeholder || 'Type \'/\' for commands...',
+      placeholder: options.placeholder || "Type '/' for commands...",
       emptyEditorClass: 'is-editor-empty',
       emptyNodeClass: 'is-node-empty',
     }),
@@ -78,4 +78,3 @@ export function createExtensions(options: ExtensionOptions = {}) {
     Toggle,
   ]
 }
-

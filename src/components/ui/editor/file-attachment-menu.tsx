@@ -1,16 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import type { Editor } from '@tiptap/react'
-import {
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  LayoutList,
-  CreditCard,
-  Maximize2,
-  Eye,
-  Trash2,
-} from 'lucide-react'
+import { AlignLeft, AlignCenter, AlignRight, LayoutList, CreditCard, Maximize2, Eye, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { FileDisplayMode, FileAlignment } from './extensions/file-attachment'
@@ -80,17 +71,26 @@ export function FileAttachmentMenu({
     }
   }, [isOpen, onClose])
 
-  const handleDisplayModeChange = useCallback((mode: FileDisplayMode) => {
-    updateAttributes({ displayMode: mode })
-  }, [updateAttributes])
+  const handleDisplayModeChange = useCallback(
+    (mode: FileDisplayMode) => {
+      updateAttributes({ displayMode: mode })
+    },
+    [updateAttributes],
+  )
 
-  const handleAlignmentChange = useCallback((align: FileAlignment) => {
-    updateAttributes({ alignment: align })
-  }, [updateAttributes])
+  const handleAlignmentChange = useCallback(
+    (align: FileAlignment) => {
+      updateAttributes({ alignment: align })
+    },
+    [updateAttributes],
+  )
 
-  const handleWidthChange = useCallback((newWidth: number | null) => {
-    updateAttributes({ width: newWidth })
-  }, [updateAttributes])
+  const handleWidthChange = useCallback(
+    (newWidth: number | null) => {
+      updateAttributes({ width: newWidth })
+    },
+    [updateAttributes],
+  )
 
   if (!isOpen || !editor.isEditable) return null
 
@@ -102,7 +102,7 @@ export function FileAttachmentMenu({
         'fixed z-50',
         'bg-popover border border-border rounded-lg shadow-lg',
         'p-1.5',
-        'animate-in fade-in zoom-in-95 duration-150'
+        'animate-in fade-in zoom-in-95 duration-150',
       )}
       style={{
         top: position.top,
@@ -119,10 +119,7 @@ export function FileAttachmentMenu({
             size="icon-xs"
             onClick={() => handleDisplayModeChange('inline')}
             title="Inline view"
-            className={cn(
-              'h-7 w-7',
-              displayMode === 'inline' && 'bg-primary text-primary-foreground'
-            )}
+            className={cn('h-7 w-7', displayMode === 'inline' && 'bg-primary text-primary-foreground')}
           >
             <LayoutList size={14} />
           </Button>
@@ -131,10 +128,7 @@ export function FileAttachmentMenu({
             size="icon-xs"
             onClick={() => handleDisplayModeChange('block')}
             title="Card view"
-            className={cn(
-              'h-7 w-7',
-              displayMode === 'block' && 'bg-primary text-primary-foreground'
-            )}
+            className={cn('h-7 w-7', displayMode === 'block' && 'bg-primary text-primary-foreground')}
           >
             <CreditCard size={14} />
           </Button>
@@ -150,10 +144,7 @@ export function FileAttachmentMenu({
                 size="icon-xs"
                 onClick={() => handleAlignmentChange('left')}
                 title="Align left"
-                className={cn(
-                  'h-7 w-7',
-                  alignment === 'left' && 'bg-primary text-primary-foreground'
-                )}
+                className={cn('h-7 w-7', alignment === 'left' && 'bg-primary text-primary-foreground')}
               >
                 <AlignLeft size={14} />
               </Button>
@@ -162,10 +153,7 @@ export function FileAttachmentMenu({
                 size="icon-xs"
                 onClick={() => handleAlignmentChange('center')}
                 title="Align center"
-                className={cn(
-                  'h-7 w-7',
-                  alignment === 'center' && 'bg-primary text-primary-foreground'
-                )}
+                className={cn('h-7 w-7', alignment === 'center' && 'bg-primary text-primary-foreground')}
               >
                 <AlignCenter size={14} />
               </Button>
@@ -174,10 +162,7 @@ export function FileAttachmentMenu({
                 size="icon-xs"
                 onClick={() => handleAlignmentChange('right')}
                 title="Align right"
-                className={cn(
-                  'h-7 w-7',
-                  alignment === 'right' && 'bg-primary text-primary-foreground'
-                )}
+                className={cn('h-7 w-7', alignment === 'right' && 'bg-primary text-primary-foreground')}
               >
                 <AlignRight size={14} />
               </Button>
@@ -194,14 +179,10 @@ export function FileAttachmentMenu({
                   title={size.width ? `${size.width}px` : 'Full width'}
                   className={cn(
                     'h-7 w-7 text-xs font-medium',
-                    width === size.width && 'bg-primary text-primary-foreground'
+                    width === size.width && 'bg-primary text-primary-foreground',
                   )}
                 >
-                  {size.label === 'Full' ? (
-                    <Maximize2 size={14} />
-                  ) : (
-                    size.label
-                  )}
+                  {size.label === 'Full' ? <Maximize2 size={14} /> : size.label}
                 </Button>
               ))}
             </div>
@@ -210,13 +191,7 @@ export function FileAttachmentMenu({
 
         {/* Actions */}
         <div className="flex items-center gap-0.5">
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={onPreview}
-            title="Preview"
-            className="h-7 w-7"
-          >
+          <Button variant="ghost" size="icon-xs" onClick={onPreview} title="Preview" className="h-7 w-7">
             <Eye size={14} />
           </Button>
           <Button
@@ -231,6 +206,6 @@ export function FileAttachmentMenu({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   )
 }

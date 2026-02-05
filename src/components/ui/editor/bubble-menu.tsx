@@ -1,14 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import type { Editor } from '@tiptap/react'
-import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  Code,
-  Highlighter,
-  Link,
-} from 'lucide-react'
+import { Bold, Italic, Underline as UnderlineIcon, Strikethrough, Code, Highlighter, Link } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { LinkPopoverContent } from './link-popover'

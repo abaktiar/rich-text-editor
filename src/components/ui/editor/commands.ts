@@ -205,10 +205,7 @@ export const defaultSlashCommands: SlashCommand[] = [
 ]
 
 // Filter commands based on query
-export function filterCommands(
-  commands: SlashCommand[],
-  query: string
-): SlashCommand[] {
+export function filterCommands(commands: SlashCommand[], query: string): SlashCommand[] {
   if (!query) return commands
 
   const lowerQuery = query.toLowerCase()
@@ -216,17 +213,13 @@ export function filterCommands(
   return commands.filter((command) => {
     const nameMatch = command.name.toLowerCase().includes(lowerQuery)
     const descriptionMatch = command.description.toLowerCase().includes(lowerQuery)
-    const aliasMatch = command.aliases?.some((alias) =>
-      alias.toLowerCase().includes(lowerQuery)
-    )
+    const aliasMatch = command.aliases?.some((alias) => alias.toLowerCase().includes(lowerQuery))
     return nameMatch || descriptionMatch || aliasMatch
   })
 }
 
 // Group commands by their group
-export function groupCommands(
-  commands: SlashCommand[]
-): Map<SlashCommandGroupInfo, SlashCommand[]> {
+export function groupCommands(commands: SlashCommand[]): Map<SlashCommandGroupInfo, SlashCommand[]> {
   const grouped = new Map<SlashCommandGroupInfo, SlashCommand[]>()
 
   // Sort groups by priority

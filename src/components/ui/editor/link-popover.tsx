@@ -1,11 +1,7 @@
 import { useState, useCallback, useRef, useLayoutEffect, useId } from 'react'
 import type { Editor } from '@tiptap/react'
 import { Button } from '@/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Link, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -74,12 +70,7 @@ export function LinkPopoverContent({ editor, onClose }: LinkPopoverContentProps)
         .run()
     } else if (text) {
       // Apply link to existing text
-      editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     } else {
       // No text - insert URL as both text and link
       editor
@@ -112,7 +103,7 @@ export function LinkPopoverContent({ editor, onClose }: LinkPopoverContentProps)
         onClose()
       }
     },
-    [handleSubmit, onClose]
+    [handleSubmit, onClose],
   )
 
   const isEditing = editor.isActive('link')
@@ -167,12 +158,7 @@ export function LinkPopoverContent({ editor, onClose }: LinkPopoverContentProps)
           <div />
         )}
         <div className="flex gap-1.5">
-          <Button
-            type="button"
-            variant="ghost"
-            size="xs"
-            onClick={onClose}
-          >
+          <Button type="button" variant="ghost" size="xs" onClick={onClose}>
             Cancel
           </Button>
           <Button type="button" size="xs" onClick={handleSubmit} disabled={!url}>
@@ -203,10 +189,7 @@ export function LinkPopoverButton({ editor, variant = 'toolbar', className }: Li
           <Button
             variant={isEditing ? 'default' : 'ghost'}
             size={variant === 'toolbar' ? 'icon-sm' : 'icon-sm'}
-            className={cn(
-              isEditing && 'bg-primary text-primary-foreground',
-              className
-            )}
+            className={cn(isEditing && 'bg-primary text-primary-foreground', className)}
             title="Add/Edit link"
             type="button"
             onPointerDown={(e) => {
@@ -238,11 +221,7 @@ export function FloatingLinkPopover({ editor, open, onOpenChange }: FloatingLink
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40"
-        aria-hidden="true"
-        onClick={() => onOpenChange(false)}
-      />
+      <div className="fixed inset-0 z-40" aria-hidden="true" onClick={() => onOpenChange(false)} />
       {/* Modal */}
       <div
         role="dialog"

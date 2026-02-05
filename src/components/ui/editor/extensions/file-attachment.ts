@@ -100,11 +100,13 @@ declare module '@tiptap/core' {
       /**
        * Update file attachment attributes
        */
-      updateFileAttachment: (attributes: Partial<{
-        displayMode: FileDisplayMode
-        alignment: FileAlignment
-        width: number
-      }>) => ReturnType
+      updateFileAttachment: (
+        attributes: Partial<{
+          displayMode: FileDisplayMode
+          alignment: FileAlignment
+          width: number
+        }>,
+      ) => ReturnType
       /**
        * Remove current file attachment
        */
@@ -265,10 +267,7 @@ export const FileAttachment = Node.create<FileAttachmentOptions>({
         ({ tr, state, dispatch }) => {
           let found = false
           state.doc.descendants((node, pos) => {
-            if (
-              node.type.name === 'fileAttachment' &&
-              node.attrs.uploadId === uploadId
-            ) {
+            if (node.type.name === 'fileAttachment' && node.attrs.uploadId === uploadId) {
               if (dispatch) {
                 tr.setNodeMarkup(pos, undefined, {
                   ...node.attrs,
@@ -291,10 +290,7 @@ export const FileAttachment = Node.create<FileAttachmentOptions>({
         ({ tr, state, dispatch }) => {
           let found = false
           state.doc.descendants((node, pos) => {
-            if (
-              node.type.name === 'fileAttachment' &&
-              node.attrs.uploadId === uploadId
-            ) {
+            if (node.type.name === 'fileAttachment' && node.attrs.uploadId === uploadId) {
               if (dispatch) {
                 tr.delete(pos, pos + node.nodeSize)
               }

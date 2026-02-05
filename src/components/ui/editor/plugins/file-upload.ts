@@ -175,7 +175,7 @@ export interface FileUploadPluginOptions {
 function createFileInput(
   options: FileUploadPluginOptions,
   editor: Editor,
-  displayMode: 'block' | 'inline'
+  displayMode: 'block' | 'inline',
 ): HTMLInputElement {
   const input = document.createElement('input')
   input.type = 'file'
@@ -204,7 +204,7 @@ async function uploadFile(
   file: File,
   options: FileUploadPluginOptions,
   editor: Editor,
-  requestedDisplayMode: 'block' | 'inline'
+  requestedDisplayMode: 'block' | 'inline',
 ): Promise<void> {
   const maxSize = options.maxSize ?? 10 * 1024 * 1024 // 10MB default
 
@@ -241,11 +241,7 @@ async function uploadFile(
   }
 
   // Determine display mode before inserting placeholder
-  const displayMode = getDisplayModeForType(
-    file.type,
-    options.displayModeByType,
-    requestedDisplayMode
-  )
+  const displayMode = getDisplayModeForType(file.type, options.displayModeByType, requestedDisplayMode)
 
   // Generate unique ID to find placeholder after async upload
   const uploadId = generateUploadId()
@@ -307,7 +303,7 @@ function formatSize(bytes: number): string {
 function getDisplayModeForType(
   mimeType: string,
   displayModeByType: DisplayModeByType | undefined,
-  defaultMode: 'block' | 'inline'
+  defaultMode: 'block' | 'inline',
 ): 'block' | 'inline' {
   if (!displayModeByType) return defaultMode
 
@@ -329,10 +325,7 @@ function getDisplayModeForType(
   return defaultMode
 }
 
-function setupClipboardPaste(
-  editor: Editor,
-  options: FileUploadPluginOptions
-): () => void {
+function setupClipboardPaste(editor: Editor, options: FileUploadPluginOptions): () => void {
   const handlePaste = async (event: ClipboardEvent) => {
     const files = event.clipboardData?.files
     if (!files || files.length === 0) return
@@ -350,11 +343,7 @@ function setupClipboardPaste(
     for (const file of Array.from(files)) {
       if (!file.type) continue
 
-      const displayMode = getDisplayModeForType(
-        file.type,
-        options.displayModeByType,
-        defaultMode
-      )
+      const displayMode = getDisplayModeForType(file.type, options.displayModeByType, defaultMode)
       await uploadFile(file, options, editor, displayMode)
     }
   }
@@ -367,10 +356,7 @@ function setupClipboardPaste(
   }
 }
 
-function setupDragAndDrop(
-  editor: Editor,
-  options: FileUploadPluginOptions
-): () => void {
+function setupDragAndDrop(editor: Editor, options: FileUploadPluginOptions): () => void {
   const handleDragOver = (event: DragEvent) => {
     event.preventDefault()
     event.stopPropagation()
@@ -387,11 +373,7 @@ function setupDragAndDrop(
 
     for (const file of Array.from(files)) {
       // Determine display mode based on file type
-      const displayMode = getDisplayModeForType(
-        file.type,
-        options.displayModeByType,
-        defaultMode
-      )
+      const displayMode = getDisplayModeForType(file.type, options.displayModeByType, defaultMode)
       await uploadFile(file, options, editor, displayMode)
     }
   }
@@ -407,9 +389,7 @@ function setupDragAndDrop(
   }
 }
 
-export function createFileUploadPlugin(
-  options: FileUploadPluginOptions
-): EditorPlugin {
+export function createFileUploadPlugin(options: FileUploadPluginOptions): EditorPlugin {
   let fileInputInline: HTMLInputElement | null = null
   let fileInputBlock: HTMLInputElement | null = null
   let cleanupDragAndDrop: (() => void) | null = null

@@ -37,9 +37,9 @@ const LANGUAGES = [
 export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewProps) {
   const [copied, setCopied] = useState(false)
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
-  
+
   const language = node.attrs.language || ''
-  const currentLanguage = LANGUAGES.find(l => l.value === language) || LANGUAGES[0]
+  const currentLanguage = LANGUAGES.find((l) => l.value === language) || LANGUAGES[0]
   const isEditable = editor.isEditable
 
   const copyCode = useCallback(() => {
@@ -50,10 +50,13 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
     })
   }, [node.textContent])
 
-  const setLanguage = useCallback((lang: string) => {
-    updateAttributes({ language: lang })
-    setShowLanguageDropdown(false)
-  }, [updateAttributes])
+  const setLanguage = useCallback(
+    (lang: string) => {
+      updateAttributes({ language: lang })
+      setShowLanguageDropdown(false)
+    },
+    [updateAttributes],
+  )
 
   // In view mode, render a simpler code block without edit controls
   if (!isEditable) {
@@ -61,17 +64,10 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
       <NodeViewWrapper className="code-block-wrapper code-block-view-mode">
         <div className="code-block-header">
           {/* Show language label (read-only) */}
-          <div className="code-block-language-label">
-            {currentLanguage.label}
-          </div>
+          <div className="code-block-language-label">{currentLanguage.label}</div>
 
           {/* Copy Button - available in view mode too */}
-          <button
-            className="code-block-copy-button"
-            onClick={copyCode}
-            contentEditable={false}
-            title="Copy code"
-          >
+          <button className="code-block-copy-button" onClick={copyCode} contentEditable={false} title="Copy code">
             {copied ? (
               <>
                 <Check size={14} />
@@ -85,7 +81,7 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
             )}
           </button>
         </div>
-        
+
         <pre>
           <code>
             <NodeViewContent />
@@ -109,7 +105,7 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
             <span>{currentLanguage.label}</span>
             <ChevronDown size={14} />
           </button>
-          
+
           {showLanguageDropdown && (
             <div className="code-block-language-dropdown" contentEditable={false}>
               {LANGUAGES.map((lang) => (
@@ -117,7 +113,7 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
                   key={lang.value}
                   className={cn(
                     'code-block-language-option',
-                    lang.value === language && 'code-block-language-option-active'
+                    lang.value === language && 'code-block-language-option-active',
                   )}
                   onClick={() => setLanguage(lang.value)}
                 >
@@ -129,12 +125,7 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
         </div>
 
         {/* Copy Button */}
-        <button
-          className="code-block-copy-button"
-          onClick={copyCode}
-          contentEditable={false}
-          title="Copy code"
-        >
+        <button className="code-block-copy-button" onClick={copyCode} contentEditable={false} title="Copy code">
           {copied ? (
             <>
               <Check size={14} />
@@ -148,7 +139,7 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
           )}
         </button>
       </div>
-      
+
       <pre>
         <code>
           <NodeViewContent />
@@ -157,4 +148,3 @@ export function CodeBlockComponent({ node, updateAttributes, editor }: NodeViewP
     </NodeViewWrapper>
   )
 }
-

@@ -20,26 +20,30 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
     const [selectedIndex, setSelectedIndex] = useState(0)
 
     // Handle keyboard navigation via ref
-    useImperativeHandle(ref, () => ({
-      onKeyDown: ({ event }) => {
-        if (event.key === 'ArrowUp') {
-          setSelectedIndex((prev) => (prev <= 0 ? items.length - 1 : prev - 1))
-          return true
-        }
-        if (event.key === 'ArrowDown') {
-          setSelectedIndex((prev) => (prev >= items.length - 1 ? 0 : prev + 1))
-          return true
-        }
-        if (event.key === 'Enter') {
-          const safeIdx = Math.min(selectedIndex, items.length - 1)
-          if (items[safeIdx]) {
-            command(items[safeIdx])
+    useImperativeHandle(
+      ref,
+      () => ({
+        onKeyDown: ({ event }) => {
+          if (event.key === 'ArrowUp') {
+            setSelectedIndex((prev) => (prev <= 0 ? items.length - 1 : prev - 1))
+            return true
           }
-          return true
-        }
-        return false
-      },
-    }), [items, selectedIndex, command])
+          if (event.key === 'ArrowDown') {
+            setSelectedIndex((prev) => (prev >= items.length - 1 ? 0 : prev + 1))
+            return true
+          }
+          if (event.key === 'Enter') {
+            const safeIdx = Math.min(selectedIndex, items.length - 1)
+            if (items[safeIdx]) {
+              command(items[safeIdx])
+            }
+            return true
+          }
+          return false
+        },
+      }),
+      [items, selectedIndex, command],
+    )
 
     if (loading) {
       return (
@@ -66,23 +70,16 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
           <button
             key={item.id}
             type="button"
-            className={cn(
-              'mention-list-item',
-              index === safeIndex && 'is-selected'
-            )}
+            className={cn('mention-list-item', index === safeIndex && 'is-selected')}
             onClick={() => command(item)}
             onMouseEnter={() => setSelectedIndex(index)}
           >
-            {renderItem ? (
-              renderItem(item, index === safeIndex)
-            ) : (
-              <DefaultMentionItem item={item} />
-            )}
+            {renderItem ? renderItem(item, index === safeIndex) : <DefaultMentionItem item={item} />}
           </button>
         ))}
       </div>
     )
-  }
+  },
 )
 
 MentionList.displayName = 'MentionList'
@@ -90,9 +87,7 @@ MentionList.displayName = 'MentionList'
 function DefaultMentionItem({ item }: { item: MentionItem }) {
   return (
     <>
-      {item.avatar && (
-        <img src={item.avatar} alt="" className="w-6 h-6 rounded-full object-cover flex-shrink-0" />
-      )}
+      {item.avatar && <img src={item.avatar} alt="" className="w-6 h-6 rounded-full object-cover flex-shrink-0" />}
       <span className="font-medium truncate">{item.label}</span>
     </>
   )

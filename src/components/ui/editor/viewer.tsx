@@ -18,13 +18,16 @@ const formatCssValue = (value: string | number | undefined): string | undefined 
  * Renders content without editing UI (no bubble menu, no slash commands).
  */
 export function RichTextViewer({ content, className, onMentionClick, codeBlockMaxHeight }: RichTextViewerProps) {
-  const extensions = useMemo(() => [
-    ...createExtensions(),
-    FileAttachment, // Include file attachment support for viewing
-    MentionExtension.configure({
-      onMentionClick,
-    }),
-  ], [onMentionClick])
+  const extensions = useMemo(
+    () => [
+      ...createExtensions(),
+      FileAttachment, // Include file attachment support for viewing
+      MentionExtension.configure({
+        onMentionClick,
+      }),
+    ],
+    [onMentionClick],
+  )
 
   const editor = useEditor({
     extensions,
@@ -42,11 +45,7 @@ export function RichTextViewer({ content, className, onMentionClick, codeBlockMa
   } as React.CSSProperties
 
   return (
-    <div
-      className={cn('rich-text-editor', className)}
-      data-editable="false"
-      style={viewerStyle}
-    >
+    <div className={cn('rich-text-editor', className)} data-editable="false" style={viewerStyle}>
       <EditorContent editor={editor} />
     </div>
   )

@@ -49,10 +49,7 @@ function ToolbarButton({ icon, onClick, isActive, disabled, title }: ToolbarButt
       disabled={disabled}
       title={title}
       type="button"
-      className={cn(
-        isActive && 'bg-primary text-primary-foreground',
-        disabled && 'opacity-40 cursor-not-allowed'
-      )}
+      className={cn(isActive && 'bg-primary text-primary-foreground', disabled && 'opacity-40 cursor-not-allowed')}
     >
       {icon}
     </Button>

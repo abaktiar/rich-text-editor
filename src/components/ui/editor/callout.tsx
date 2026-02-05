@@ -132,20 +132,11 @@ export function CalloutComponent({ node, updateAttributes, editor, extension }: 
   }, [showTypeDropdown])
 
   return (
-    <NodeViewWrapper
-      className="callout-wrapper"
-      style={wrapperStyle}
-      data-callout-type={calloutTypeId}
-    >
+    <NodeViewWrapper className="callout-wrapper" style={wrapperStyle} data-callout-type={calloutTypeId}>
       <div className="callout-icon-container" style={iconStyle} contentEditable={false}>
         {isEditable ? (
           <div className="callout-type-selector">
-            <button
-              ref={buttonRef}
-              className="callout-type-button"
-              onClick={handleToggleDropdown}
-              type="button"
-            >
+            <button ref={buttonRef} className="callout-type-button" onClick={handleToggleDropdown} type="button">
               <Icon size={20} />
               <ChevronDown size={12} className="callout-type-chevron" />
             </button>
@@ -161,10 +152,7 @@ export function CalloutComponent({ node, updateAttributes, editor, extension }: 
                   return (
                     <button
                       key={type.id}
-                      className={cn(
-                        'callout-type-option',
-                        type.id === calloutTypeId && 'callout-type-option-active'
-                      )}
+                      className={cn('callout-type-option', type.id === calloutTypeId && 'callout-type-option-active')}
                       onClick={() => setType(type.id)}
                       type="button"
                     >

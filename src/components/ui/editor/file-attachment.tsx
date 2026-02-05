@@ -15,7 +15,13 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { FilePreviewDialog } from './file-preview-dialog'
 import { FileAttachmentMenu } from './file-attachment-menu'
-import type { FileDisplayMode, FileAlignment, FileFetcher, PreviewOptions, FileDeleteHandler } from './extensions/file-attachment'
+import type {
+  FileDisplayMode,
+  FileAlignment,
+  FileFetcher,
+  PreviewOptions,
+  FileDeleteHandler,
+} from './extensions/file-attachment'
 
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B'
@@ -82,11 +88,14 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
   const isSelected = selected && isEditable
 
   // Get custom file fetcher, preview options, and delete handler from extension storage
-  const storage = editor.storage as unknown as Record<string, {
-    onFetchFile?: FileFetcher
-    previewOptions?: PreviewOptions
-    onFileDelete?: FileDeleteHandler
-  }>
+  const storage = editor.storage as unknown as Record<
+    string,
+    {
+      onFetchFile?: FileFetcher
+      previewOptions?: PreviewOptions
+      onFileDelete?: FileDeleteHandler
+    }
+  >
   const onFetchFile = storage.fileAttachment?.onFetchFile
   const previewOptions = storage.fileAttachment?.previewOptions
   const onFileDelete = storage.fileAttachment?.onFileDelete
@@ -105,40 +114,49 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
     setCurrentWidth(width)
   }, [width])
 
-  const handleDelete = useCallback((e?: React.MouseEvent) => {
-    e?.stopPropagation()
-    if (uploading) return
-    // Call the delete handler for cleanup (e.g., delete from server)
-    onFileDelete?.(src, name, mimeType)
-    deleteNode()
-  }, [deleteNode, onFileDelete, src, name, mimeType, uploading])
+  const handleDelete = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation()
+      if (uploading) return
+      // Call the delete handler for cleanup (e.g., delete from server)
+      onFileDelete?.(src, name, mimeType)
+      deleteNode()
+    },
+    [deleteNode, onFileDelete, src, name, mimeType, uploading],
+  )
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
 
-    if (uploading || isResizing) return
+      if (uploading || isResizing) return
 
-    if (!isEditable) {
-      // In view mode, directly open preview
+      if (!isEditable) {
+        // In view mode, directly open preview
+        setIsPreviewOpen(true)
+        return
+      }
+
+      // In edit mode, show the floating menu
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      setMenuPosition({
+        top: rect.top - 45, // Position above the element
+        left: rect.left + rect.width / 2,
+      })
+      setIsMenuOpen(true)
+    },
+    [isEditable, isResizing, uploading],
+  )
+
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      if (uploading || isResizing) return
+      setIsMenuOpen(false)
       setIsPreviewOpen(true)
-      return
-    }
-
-    // In edit mode, show the floating menu
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-    setMenuPosition({
-      top: rect.top - 45, // Position above the element
-      left: rect.left + rect.width / 2,
-    })
-    setIsMenuOpen(true)
-  }, [isEditable, isResizing, uploading])
-
-  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (uploading || isResizing) return
-    setIsMenuOpen(false)
-    setIsPreviewOpen(true)
-  }, [isResizing, uploading])
+    },
+    [isResizing, uploading],
+  )
 
   const handleMenuClose = useCallback(() => {
     setIsMenuOpen(false)
@@ -150,21 +168,24 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
   }, [])
 
   // Resize handlers for images
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    if (!isEditable || !isImage || uploading) return
-    e.preventDefault()
-    e.stopPropagation()
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isEditable || !isImage || uploading) return
+      e.preventDefault()
+      e.stopPropagation()
 
-    const currentElement = imageRef.current || elementRef.current
-    if (!currentElement) return
+      const currentElement = imageRef.current || elementRef.current
+      if (!currentElement) return
 
-    const rect = currentElement.getBoundingClientRect()
-    resizeStartRef.current = {
-      x: e.clientX,
-      width: rect.width,
-    }
-    setIsResizing(true)
-  }, [isEditable, isImage, uploading])
+      const rect = currentElement.getBoundingClientRect()
+      resizeStartRef.current = {
+        x: e.clientX,
+        width: rect.width,
+      }
+      setIsResizing(true)
+    },
+    [isEditable, isImage, uploading],
+  )
 
   const handleResizeMove = useCallback((e: MouseEvent) => {
     if (!resizeStartRef.current) return
@@ -214,7 +235,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
         className={cn(
           'file-attachment-image-wrapper',
           alignment === 'center' && 'flex justify-center',
-          alignment === 'right' && 'flex justify-end'
+          alignment === 'right' && 'flex justify-end',
         )}
         ref={elementRef}
       >
@@ -224,7 +245,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
             'relative inline-block',
             'group',
             isResizing && 'select-none',
-            uploading && 'file-attachment-uploading'
+            uploading && 'file-attachment-uploading',
           )}
           style={getWidthStyle()}
         >
@@ -232,7 +253,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
             <div
               className={cn(
                 'rounded-lg bg-muted flex flex-col items-center justify-center gap-2',
-                'border border-dashed border-border'
+                'border border-dashed border-border',
               )}
               style={{ width: currentWidth ?? 300, height: (currentWidth ?? 300) * 0.56, maxWidth: '100%' }}
             >
@@ -254,7 +275,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
                   'transition-all duration-150',
                   isEditable && 'hover:shadow-lg',
                   isMenuOpen && 'ring-2 ring-primary ring-offset-2',
-                  isSelected && 'ring-2 ring-primary ring-offset-2 shadow-lg'
+                  isSelected && 'ring-2 ring-primary ring-offset-2 shadow-lg',
                 )}
                 style={{ width: '100%', height: 'auto' }}
                 title={isEditable ? 'Click for options, double-click to preview' : `Click to view: ${name}`}
@@ -271,7 +292,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
                     'opacity-0 group-hover:opacity-100',
                     'transition-opacity',
                     'flex items-center justify-center',
-                    isResizing && 'image-resize-handle-active opacity-100'
+                    isResizing && 'image-resize-handle-active opacity-100',
                   )}
                   onMouseDown={handleResizeStart}
                   title="Drag to resize"
@@ -292,7 +313,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
                     'opacity-0 group-hover:opacity-100',
                     'transition-opacity',
                     'bg-background/80 backdrop-blur-sm',
-                    'hover:bg-destructive hover:text-destructive-foreground'
+                    'hover:bg-destructive hover:text-destructive-foreground',
                   )}
                 >
                   <Trash2 size={14} />
@@ -355,10 +376,16 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
                   'cursor-pointer',
                   isEditable ? 'hover:bg-accent hover:border-primary/30' : 'hover:bg-accent',
                   isMenuOpen && 'bg-accent border-primary/50',
-                  isSelected && 'ring-2 ring-primary ring-offset-1 bg-accent border-primary/50'
-                )
+                  isSelected && 'ring-2 ring-primary ring-offset-1 bg-accent border-primary/50',
+                ),
           )}
-          title={uploading ? `Uploading ${name}...` : (isEditable ? 'Click for options, double-click to preview' : `Click to preview: ${name}`)}
+          title={
+            uploading
+              ? `Uploading ${name}...`
+              : isEditable
+                ? 'Click for options, double-click to preview'
+                : `Click to preview: ${name}`
+          }
         >
           {uploading ? (
             <Loader2 size={14} className="animate-spin text-muted-foreground shrink-0" />
@@ -422,7 +449,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
       className={cn(
         'file-attachment-block-wrapper',
         alignment === 'center' && 'flex justify-center',
-        alignment === 'right' && 'flex justify-end'
+        alignment === 'right' && 'flex justify-end',
       )}
       data-drag-handle={!uploading ? '' : undefined}
       ref={elementRef}
@@ -442,11 +469,17 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
                 'cursor-pointer',
                 isEditable ? 'hover:bg-muted hover:border-primary/30 hover:shadow-sm' : 'hover:bg-muted',
                 isMenuOpen && 'bg-muted border-primary/50 shadow-sm',
-                isSelected && 'ring-2 ring-primary ring-offset-2 bg-muted border-primary/50 shadow-sm'
-              )
+                isSelected && 'ring-2 ring-primary ring-offset-2 bg-muted border-primary/50 shadow-sm',
+              ),
         )}
         style={{ maxWidth: '400px' }}
-        title={uploading ? `Uploading ${name}...` : (isEditable ? 'Click for options, double-click to preview' : `Click to preview: ${name}`)}
+        title={
+          uploading
+            ? `Uploading ${name}...`
+            : isEditable
+              ? 'Click for options, double-click to preview'
+              : `Click to preview: ${name}`
+        }
       >
         {/* Icon */}
         <div className="w-14 h-14 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
@@ -465,9 +498,7 @@ export function FileAttachmentComponent({ node, deleteNode, editor, updateAttrib
           <div className="text-xs text-muted-foreground mt-0.5">
             {uploading ? 'Uploading...' : formatFileSize(size)}
           </div>
-          <div className="text-xs text-muted-foreground/70 truncate">
-            {mimeType || 'Unknown type'}
-          </div>
+          <div className="text-xs text-muted-foreground/70 truncate">{mimeType || 'Unknown type'}</div>
         </div>
 
         {/* Delete Action */}

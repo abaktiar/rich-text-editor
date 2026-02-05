@@ -25,13 +25,7 @@ export interface SlashCommand {
   action: (editor: Editor, context?: EditorActionContext) => void
 }
 
-export type SlashCommandGroup =
-  | 'basic'
-  | 'lists'
-  | 'formatting'
-  | 'media'
-  | 'advanced'
-  | 'custom'
+export type SlashCommandGroup = 'basic' | 'lists' | 'formatting' | 'media' | 'advanced' | 'custom'
 
 export interface SlashCommandGroupInfo {
   id: SlashCommandGroup

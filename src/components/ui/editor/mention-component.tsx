@@ -8,10 +8,12 @@ export function MentionComponent({ node, editor, selected }: NodeViewProps) {
 
   // Get callbacks from storage (using type assertion to avoid type errors)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storage = (editor.storage as any).mention as {
-    onMentionClick?: (item: MentionItem, event: MouseEvent) => void
-    renderMention?: (item: MentionItem) => React.ReactNode
-  } | undefined
+  const storage = (editor.storage as any).mention as
+    | {
+        onMentionClick?: (item: MentionItem, event: MouseEvent) => void
+        renderMention?: (item: MentionItem) => React.ReactNode
+      }
+    | undefined
   const onMentionClick = storage?.onMentionClick
   const renderMention = storage?.renderMention
 
@@ -36,14 +38,12 @@ export function MentionComponent({ node, editor, selected }: NodeViewProps) {
           'bg-primary/10 text-primary text-sm font-medium',
           'cursor-pointer hover:bg-primary/20',
           'transition-colors whitespace-nowrap',
-          selected && isEditable && 'ring-2 ring-primary ring-offset-1'
+          selected && isEditable && 'ring-2 ring-primary ring-offset-1',
         )}
         onClick={(e) => onMentionClick?.(mentionItem, e.nativeEvent)}
         contentEditable={false}
       >
-        {avatar && (
-          <img src={avatar} alt="" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
-        )}
+        {avatar && <img src={avatar} alt="" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />}
         <span>@{label}</span>
       </span>
     </NodeViewWrapper>

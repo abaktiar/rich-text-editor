@@ -1,15 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import type { Editor } from '@tiptap/react'
-import {
-  Plus,
-  Trash2,
-  GripVertical,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Maximize2,
-} from 'lucide-react'
+import { Plus, Trash2, GripVertical, AlignLeft, AlignCenter, AlignRight, Maximize2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import type { TableAlignment } from './extensions/table'
@@ -140,82 +132,91 @@ export function TableControls({ editor }: TableControlsProps) {
   }, [])
 
   // Update table attributes and apply styles to wrapper
-  const updateTableAttributes = useCallback((attrs: Record<string, unknown>) => {
-    if (tablePos === null) return
+  const updateTableAttributes = useCallback(
+    (attrs: Record<string, unknown>) => {
+      if (tablePos === null) return
 
-    const { tr } = editor.state
-    tr.setNodeMarkup(tablePos, undefined, {
-      ...editor.state.doc.nodeAt(tablePos)?.attrs,
-      ...attrs,
-    })
-    editor.view.dispatch(tr)
-    setTableAttrs(prev => ({ ...prev, ...attrs } as typeof prev))
+      const { tr } = editor.state
+      tr.setNodeMarkup(tablePos, undefined, {
+        ...editor.state.doc.nodeAt(tablePos)?.attrs,
+        ...attrs,
+      })
+      editor.view.dispatch(tr)
+      setTableAttrs((prev) => ({ ...prev, ...attrs }) as typeof prev)
 
-    // Apply styles to wrapper element
-    if (tableElement) {
+      // Apply styles to wrapper element
+      if (tableElement) {
+        const wrapper = tableElement.classList.contains('tableWrapper')
+          ? tableElement
+          : tableElement.closest('.tableWrapper')
+
+        if (wrapper instanceof HTMLElement) {
+          // Apply alignment
+          if (attrs.alignment) {
+            wrapper.style.marginLeft = attrs.alignment === 'center' || attrs.alignment === 'right' ? 'auto' : ''
+            wrapper.style.marginRight = attrs.alignment === 'center' ? 'auto' : ''
+          }
+          // Apply width
+          if ('width' in attrs) {
+            wrapper.style.width = attrs.width ? `${attrs.width}px` : ''
+            wrapper.style.maxWidth = '100%'
+          }
+        }
+      }
+    },
+    [editor, tablePos, tableElement],
+  )
+
+  // Resize handlers
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      if (!tableElement) return
+      e.preventDefault()
+      e.stopPropagation()
+
+      const rect = tableElement.getBoundingClientRect()
+      resizeStartRef.current = {
+        x: e.clientX,
+        width: rect.width,
+      }
+      setIsResizing(true)
+
+      // Add resizing class for visual feedback
+      const wrapper = tableElement.classList.contains('tableWrapper')
+        ? tableElement
+        : tableElement.closest('.tableWrapper')
+      if (wrapper) {
+        wrapper.classList.add('resizing')
+      }
+    },
+    [tableElement],
+  )
+
+  const handleResizeMove = useCallback(
+    (e: MouseEvent) => {
+      if (!resizeStartRef.current || !tableElement) return
+      const deltaX = e.clientX - resizeStartRef.current.x
+      const newWidth = Math.max(300, Math.min(1200, resizeStartRef.current.width + deltaX))
+
+      // Store in ref to avoid full re-renders during drag
+      resizeStartRef.current.newWidth = newWidth
+
+      // Apply width immediately to wrapper for live preview (DOM only)
       const wrapper = tableElement.classList.contains('tableWrapper')
         ? tableElement
         : tableElement.closest('.tableWrapper')
 
       if (wrapper instanceof HTMLElement) {
-        // Apply alignment
-        if (attrs.alignment) {
-          wrapper.style.marginLeft = attrs.alignment === 'center' || attrs.alignment === 'right' ? 'auto' : ''
-          wrapper.style.marginRight = attrs.alignment === 'center' ? 'auto' : ''
-        }
-        // Apply width
-        if ('width' in attrs) {
-          wrapper.style.width = attrs.width ? `${attrs.width}px` : ''
-          wrapper.style.maxWidth = '100%'
-        }
+        wrapper.style.width = `${newWidth}px`
+        wrapper.style.maxWidth = '100%'
+        wrapper.style.overflow = 'hidden' // Prevent content from expanding wrapper
+
+        // Update live rect for handle positioning
+        setLiveTableRect(wrapper.getBoundingClientRect())
       }
-    }
-  }, [editor, tablePos, tableElement])
-
-  // Resize handlers
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    if (!tableElement) return
-    e.preventDefault()
-    e.stopPropagation()
-
-    const rect = tableElement.getBoundingClientRect()
-    resizeStartRef.current = {
-      x: e.clientX,
-      width: rect.width,
-    }
-    setIsResizing(true)
-
-    // Add resizing class for visual feedback
-    const wrapper = tableElement.classList.contains('tableWrapper')
-      ? tableElement
-      : tableElement.closest('.tableWrapper')
-    if (wrapper) {
-      wrapper.classList.add('resizing')
-    }
-  }, [tableElement])
-
-  const handleResizeMove = useCallback((e: MouseEvent) => {
-    if (!resizeStartRef.current || !tableElement) return
-    const deltaX = e.clientX - resizeStartRef.current.x
-    const newWidth = Math.max(300, Math.min(1200, resizeStartRef.current.width + deltaX))
-
-    // Store in ref to avoid full re-renders during drag
-    resizeStartRef.current.newWidth = newWidth
-
-    // Apply width immediately to wrapper for live preview (DOM only)
-    const wrapper = tableElement.classList.contains('tableWrapper')
-      ? tableElement
-      : tableElement.closest('.tableWrapper')
-
-    if (wrapper instanceof HTMLElement) {
-      wrapper.style.width = `${newWidth}px`
-      wrapper.style.maxWidth = '100%'
-      wrapper.style.overflow = 'hidden' // Prevent content from expanding wrapper
-
-      // Update live rect for handle positioning
-      setLiveTableRect(wrapper.getBoundingClientRect())
-    }
-  }, [tableElement])
+    },
+    [tableElement],
+  )
 
   const handleResizeEnd = useCallback(() => {
     // Remove resizing class and restore overflow
@@ -274,9 +275,7 @@ export function TableControls({ editor }: TableControlsProps) {
   }
 
   const tableRect = tableElement.getBoundingClientRect()
-  const actualTable = tableElement.tagName === 'TABLE'
-    ? tableElement
-    : tableElement.querySelector('table')
+  const actualTable = tableElement.tagName === 'TABLE' ? tableElement : tableElement.querySelector('table')
 
   if (!actualTable) return null
 
@@ -304,7 +303,7 @@ export function TableControls({ editor }: TableControlsProps) {
             key={`row-${index}`}
             className={cn(
               'table-row-handle',
-              (hoveredRow === index || showRowMenu === index) && 'table-row-handle-active'
+              (hoveredRow === index || showRowMenu === index) && 'table-row-handle-active',
             )}
             style={{
               position: 'fixed',
@@ -327,14 +326,20 @@ export function TableControls({ editor }: TableControlsProps) {
               <div className="table-control-dropdown table-row-dropdown">
                 <button
                   className="table-control-dropdown-item"
-                  onClick={() => { editor.chain().focus().addRowBefore().run(); setShowRowMenu(null); }}
+                  onClick={() => {
+                    editor.chain().focus().addRowBefore().run()
+                    setShowRowMenu(null)
+                  }}
                 >
                   <Plus size={14} />
                   <span>Insert above</span>
                 </button>
                 <button
                   className="table-control-dropdown-item"
-                  onClick={() => { editor.chain().focus().addRowAfter().run(); setShowRowMenu(null); }}
+                  onClick={() => {
+                    editor.chain().focus().addRowAfter().run()
+                    setShowRowMenu(null)
+                  }}
                 >
                   <Plus size={14} />
                   <span>Insert below</span>
@@ -342,7 +347,10 @@ export function TableControls({ editor }: TableControlsProps) {
                 <div className="table-control-dropdown-divider" />
                 <button
                   className="table-control-dropdown-item table-control-dropdown-item-danger"
-                  onClick={() => { editor.chain().focus().deleteRow().run(); setShowRowMenu(null); }}
+                  onClick={() => {
+                    editor.chain().focus().deleteRow().run()
+                    setShowRowMenu(null)
+                  }}
                 >
                   <Trash2 size={14} />
                   <span>Delete row</span>
@@ -358,7 +366,7 @@ export function TableControls({ editor }: TableControlsProps) {
             key={`col-${index}`}
             className={cn(
               'table-col-handle',
-              (hoveredCol === index || showColMenu === index) && 'table-col-handle-active'
+              (hoveredCol === index || showColMenu === index) && 'table-col-handle-active',
             )}
             style={{
               position: 'fixed',
@@ -376,24 +384,27 @@ export function TableControls({ editor }: TableControlsProps) {
             </button>
 
             {/* Vertical line */}
-            <div
-              className="table-col-line"
-              style={{ height: tableRect.height + 12 }}
-            />
+            <div className="table-col-line" style={{ height: tableRect.height + 12 }} />
 
             {/* Column menu dropdown */}
             {showColMenu === index && (
               <div className="table-control-dropdown table-col-dropdown">
                 <button
                   className="table-control-dropdown-item"
-                  onClick={() => { editor.chain().focus().addColumnBefore().run(); setShowColMenu(null); }}
+                  onClick={() => {
+                    editor.chain().focus().addColumnBefore().run()
+                    setShowColMenu(null)
+                  }}
                 >
                   <Plus size={14} />
                   <span>Insert left</span>
                 </button>
                 <button
                   className="table-control-dropdown-item"
-                  onClick={() => { editor.chain().focus().addColumnAfter().run(); setShowColMenu(null); }}
+                  onClick={() => {
+                    editor.chain().focus().addColumnAfter().run()
+                    setShowColMenu(null)
+                  }}
                 >
                   <Plus size={14} />
                   <span>Insert right</span>
@@ -401,7 +412,10 @@ export function TableControls({ editor }: TableControlsProps) {
                 <div className="table-control-dropdown-divider" />
                 <button
                   className="table-control-dropdown-item table-control-dropdown-item-danger"
-                  onClick={() => { editor.chain().focus().deleteColumn().run(); setShowColMenu(null); }}
+                  onClick={() => {
+                    editor.chain().focus().deleteColumn().run()
+                    setShowColMenu(null)
+                  }}
                 >
                   <Trash2 size={14} />
                   <span>Delete column</span>
@@ -431,10 +445,7 @@ export function TableControls({ editor }: TableControlsProps) {
 
         {/* Resize handle - bottom right corner */}
         <div
-          className={cn(
-            'table-resize-handle',
-            isResizing && 'table-resize-handle-active'
-          )}
+          className={cn('table-resize-handle', isResizing && 'table-resize-handle-active')}
           style={{
             position: 'fixed',
             top: (liveTableRect || tableRect).bottom - 12,
@@ -456,10 +467,7 @@ export function TableControls({ editor }: TableControlsProps) {
             width: (liveTableRect || tableRect).width,
           }}
         >
-          <button
-            className="table-add-row-bottom-button"
-            onClick={() => editor.chain().focus().addRowAfter().run()}
-          >
+          <button className="table-add-row-bottom-button" onClick={() => editor.chain().focus().addRowAfter().run()}>
             <Plus size={14} />
             <span>Add row</span>
           </button>
@@ -467,85 +475,89 @@ export function TableControls({ editor }: TableControlsProps) {
       </div>
 
       {/* Floating table menu */}
-      {showTableMenu && createPortal(
-        <div
-          className="table-floating-menu"
-          style={{
-            position: 'fixed',
-            top: menuPosition.top,
-            left: menuPosition.left,
-            transform: 'translateX(-50%)',
-            zIndex: 50,
-          }}
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          {/* Alignment */}
-          <div className="table-menu-section">
-            <Button
-              variant={tableAttrs.alignment === 'left' ? 'default' : 'ghost'}
-              size="icon-xs"
-              onClick={() => updateTableAttributes({ alignment: 'left' })}
-              title="Align left"
-              className={cn('h-7 w-7', tableAttrs.alignment === 'left' && 'bg-primary text-primary-foreground')}
-            >
-              <AlignLeft size={14} />
-            </Button>
-            <Button
-              variant={tableAttrs.alignment === 'center' ? 'default' : 'ghost'}
-              size="icon-xs"
-              onClick={() => updateTableAttributes({ alignment: 'center' })}
-              title="Align center"
-              className={cn('h-7 w-7', tableAttrs.alignment === 'center' && 'bg-primary text-primary-foreground')}
-            >
-              <AlignCenter size={14} />
-            </Button>
-            <Button
-              variant={tableAttrs.alignment === 'right' ? 'default' : 'ghost'}
-              size="icon-xs"
-              onClick={() => updateTableAttributes({ alignment: 'right' })}
-              title="Align right"
-              className={cn('h-7 w-7', tableAttrs.alignment === 'right' && 'bg-primary text-primary-foreground')}
-            >
-              <AlignRight size={14} />
-            </Button>
-          </div>
-
-          <div className="table-menu-divider" />
-
-          {/* Size */}
-          <div className="table-menu-section">
-            {TABLE_SIZES.map((size) => (
-              <Button
-                key={size.label}
-                variant={tableAttrs.width === size.width ? 'default' : 'ghost'}
-                size="icon-xs"
-                onClick={() => updateTableAttributes({ width: size.width })}
-                title={size.width ? `${size.width}px` : 'Full width'}
-                className={cn(
-                  'h-7 w-7 text-xs font-medium',
-                  tableAttrs.width === size.width && 'bg-primary text-primary-foreground'
-                )}
-              >
-                {size.label === 'Full' ? <Maximize2 size={14} /> : size.label}
-              </Button>
-            ))}
-          </div>
-
-          <div className="table-menu-divider" />
-
-          {/* Delete */}
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => { editor.chain().focus().deleteTable().run(); setShowTableMenu(false); }}
-            title="Delete table"
-            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+      {showTableMenu &&
+        createPortal(
+          <div
+            className="table-floating-menu"
+            style={{
+              position: 'fixed',
+              top: menuPosition.top,
+              left: menuPosition.left,
+              transform: 'translateX(-50%)',
+              zIndex: 50,
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
           >
-            <Trash2 size={14} />
-          </Button>
-        </div>,
-        document.body
-      )}
+            {/* Alignment */}
+            <div className="table-menu-section">
+              <Button
+                variant={tableAttrs.alignment === 'left' ? 'default' : 'ghost'}
+                size="icon-xs"
+                onClick={() => updateTableAttributes({ alignment: 'left' })}
+                title="Align left"
+                className={cn('h-7 w-7', tableAttrs.alignment === 'left' && 'bg-primary text-primary-foreground')}
+              >
+                <AlignLeft size={14} />
+              </Button>
+              <Button
+                variant={tableAttrs.alignment === 'center' ? 'default' : 'ghost'}
+                size="icon-xs"
+                onClick={() => updateTableAttributes({ alignment: 'center' })}
+                title="Align center"
+                className={cn('h-7 w-7', tableAttrs.alignment === 'center' && 'bg-primary text-primary-foreground')}
+              >
+                <AlignCenter size={14} />
+              </Button>
+              <Button
+                variant={tableAttrs.alignment === 'right' ? 'default' : 'ghost'}
+                size="icon-xs"
+                onClick={() => updateTableAttributes({ alignment: 'right' })}
+                title="Align right"
+                className={cn('h-7 w-7', tableAttrs.alignment === 'right' && 'bg-primary text-primary-foreground')}
+              >
+                <AlignRight size={14} />
+              </Button>
+            </div>
+
+            <div className="table-menu-divider" />
+
+            {/* Size */}
+            <div className="table-menu-section">
+              {TABLE_SIZES.map((size) => (
+                <Button
+                  key={size.label}
+                  variant={tableAttrs.width === size.width ? 'default' : 'ghost'}
+                  size="icon-xs"
+                  onClick={() => updateTableAttributes({ width: size.width })}
+                  title={size.width ? `${size.width}px` : 'Full width'}
+                  className={cn(
+                    'h-7 w-7 text-xs font-medium',
+                    tableAttrs.width === size.width && 'bg-primary text-primary-foreground',
+                  )}
+                >
+                  {size.label === 'Full' ? <Maximize2 size={14} /> : size.label}
+                </Button>
+              ))}
+            </div>
+
+            <div className="table-menu-divider" />
+
+            {/* Delete */}
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => {
+                editor.chain().focus().deleteTable().run()
+                setShowTableMenu(false)
+              }}
+              title="Delete table"
+              className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              <Trash2 size={14} />
+            </Button>
+          </div>,
+          document.body,
+        )}
     </>
   )
 }

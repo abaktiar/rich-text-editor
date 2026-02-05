@@ -14,18 +14,18 @@ export const TableExtension = Table.extend({
       ...this.parent?.(),
       alignment: {
         default: 'left',
-        parseHTML: element => element.getAttribute('data-alignment') || 'left',
-        renderHTML: attributes => ({
+        parseHTML: (element) => element.getAttribute('data-alignment') || 'left',
+        renderHTML: (attributes) => ({
           'data-alignment': attributes.alignment,
         }),
       },
       width: {
         default: null,
-        parseHTML: element => {
+        parseHTML: (element) => {
           const width = element.getAttribute('data-width')
           return width ? parseInt(width, 10) : null
         },
-        renderHTML: attributes => {
+        renderHTML: (attributes) => {
           if (!attributes.width) return {}
           return {
             'data-width': attributes.width,
@@ -115,9 +115,4 @@ export const TableCellExtension = TableCell.extend({
 })
 
 // Export all table extensions as an array
-export const tableExtensions = [
-  TableExtension,
-  TableRowExtension,
-  TableHeaderExtension,
-  TableCellExtension,
-]
+export const tableExtensions = [TableExtension, TableRowExtension, TableHeaderExtension, TableCellExtension]

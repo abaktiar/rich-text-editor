@@ -16,7 +16,7 @@ export function ToggleComponent({ node, updateAttributes, editor }: NodeViewProp
     (e: React.ChangeEvent<HTMLInputElement>) => {
       updateAttributes({ title: e.target.value })
     },
-    [updateAttributes]
+    [updateAttributes],
   )
 
   const handleTitleKeyDown = useCallback(
@@ -30,7 +30,7 @@ export function ToggleComponent({ node, updateAttributes, editor }: NodeViewProp
         }
       }
     },
-    [isOpen, updateAttributes]
+    [isOpen, updateAttributes],
   )
 
   return (
