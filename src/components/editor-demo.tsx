@@ -627,12 +627,18 @@ export function EditorDemo() {
     () =>
       createFileUploadPlugin({
         onUpload: async (file) => {
-          return new Promise((resolve, reject) => {
+          // Read file to data URL
+          const dataUrl = await new Promise<string>((resolve, reject) => {
             const reader = new FileReader()
             reader.onload = () => resolve(reader.result as string)
             reader.onerror = () => reject(new Error('Failed to read file'))
             reader.readAsDataURL(file)
           })
+          // Simulate server upload delay based on file size
+          // Small files (<100KB): 800ms, medium (<1MB): 1.5s, large: 2.5s
+          const delay = file.size < 100 * 1024 ? 800 : file.size < 1024 * 1024 ? 1500 : 2500
+          await new Promise((r) => setTimeout(r, delay))
+          return dataUrl
         },
         accept: ['image/*', 'application/pdf', '.doc', '.docx', '.txt', '.md', '.csv', '.json'],
         maxSize: 10 * 1024 * 1024,

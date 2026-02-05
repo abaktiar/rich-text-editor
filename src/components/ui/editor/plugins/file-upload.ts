@@ -97,6 +97,11 @@ export interface PreviewOptions {
  */
 export type DisplayModeByType = Record<string, 'block' | 'inline'>
 
+let uploadIdCounter = 0
+function generateUploadId(): string {
+  return `upload-${Date.now()}-${++uploadIdCounter}`
+}
+
 export interface FileUploadPluginOptions {
   /**
    * Handler for uploading files. Should return the URL of the uploaded file.
@@ -235,41 +240,56 @@ async function uploadFile(
     }
   }
 
-  try {
-    options.onUploadStart?.(file)
+  // Determine display mode before inserting placeholder
+  const displayMode = getDisplayModeForType(
+    file.type,
+    options.displayModeByType,
+    requestedDisplayMode
+  )
 
+  // Generate unique ID to find placeholder after async upload
+  const uploadId = generateUploadId()
+
+  // Insert placeholder immediately so user sees loading state
+  const placeholderAttrs = {
+    src: '',
+    name: file.name,
+    size: file.size,
+    mimeType: file.type,
+    uploading: true,
+    uploadId,
+  }
+
+  if (displayMode === 'block') {
+    editor.commands.setFileAttachmentBlock(placeholderAttrs)
+  } else {
+    editor.commands.setFileAttachment({
+      ...placeholderAttrs,
+      displayMode: 'inline',
+    })
+  }
+
+  options.onUploadStart?.(file)
+
+  try {
     const url = await options.onUpload(file)
 
+    // Guard: editor may have been destroyed during the async upload
+    if (editor.isDestroyed) return
+
+    // Complete the upload: update placeholder with real URL
+    editor.commands.completeFileUpload(uploadId, url)
+
     options.onUploadComplete?.(file, url)
-
-    // Determine display mode - check displayModeByType first, then use requested mode
-    const displayMode = getDisplayModeForType(
-      file.type,
-      options.displayModeByType,
-      requestedDisplayMode
-    )
-
-    // Insert the file attachment into the editor
-    if (displayMode === 'block') {
-      editor.commands.setFileAttachmentBlock({
-        src: url,
-        name: file.name,
-        size: file.size,
-        mimeType: file.type,
-      })
-    } else {
-      editor.commands.setFileAttachment({
-        src: url,
-        name: file.name,
-        size: file.size,
-        mimeType: file.type,
-        displayMode: 'inline',
-      })
-    }
   } catch (err) {
     const error = err instanceof Error ? err : new Error('Upload failed')
     options.onUploadError?.(file, error)
     console.error('File upload failed:', error)
+
+    // Remove the placeholder on failure
+    if (!editor.isDestroyed) {
+      editor.commands.failFileUpload(uploadId)
+    }
   }
 }
 
@@ -307,6 +327,44 @@ function getDisplayModeForType(
   }
 
   return defaultMode
+}
+
+function setupClipboardPaste(
+  editor: Editor,
+  options: FileUploadPluginOptions
+): () => void {
+  const handlePaste = async (event: ClipboardEvent) => {
+    const files = event.clipboardData?.files
+    if (!files || files.length === 0) return
+
+    // Only handle if clipboard contains files (screenshots, copied images)
+    // Let normal text paste pass through
+    const hasFiles = Array.from(files).some((file) => file.type.length > 0)
+    if (!hasFiles) return
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    const defaultMode = options.defaultDisplayMode ?? 'inline'
+
+    for (const file of Array.from(files)) {
+      if (!file.type) continue
+
+      const displayMode = getDisplayModeForType(
+        file.type,
+        options.displayModeByType,
+        defaultMode
+      )
+      await uploadFile(file, options, editor, displayMode)
+    }
+  }
+
+  const editorElement = editor.view.dom
+  editorElement.addEventListener('paste', handlePaste)
+
+  return () => {
+    editorElement.removeEventListener('paste', handlePaste)
+  }
 }
 
 function setupDragAndDrop(
@@ -355,6 +413,7 @@ export function createFileUploadPlugin(
   let fileInputInline: HTMLInputElement | null = null
   let fileInputBlock: HTMLInputElement | null = null
   let cleanupDragAndDrop: (() => void) | null = null
+  let cleanupClipboardPaste: (() => void) | null = null
 
   const triggerInlineUpload = (editor: Editor) => {
     if (!fileInputInline) {
@@ -423,6 +482,8 @@ export function createFileUploadPlugin(
       fileInputBlock = createFileInput(options, editor, 'block')
       // Setup drag and drop
       cleanupDragAndDrop = setupDragAndDrop(editor, options)
+      // Setup clipboard paste (screenshots, copied images)
+      cleanupClipboardPaste = setupClipboardPaste(editor, options)
     },
     onDestroy: () => {
       // Cleanup file inputs
@@ -438,6 +499,11 @@ export function createFileUploadPlugin(
       if (cleanupDragAndDrop) {
         cleanupDragAndDrop()
         cleanupDragAndDrop = null
+      }
+      // Cleanup clipboard paste
+      if (cleanupClipboardPaste) {
+        cleanupClipboardPaste()
+        cleanupClipboardPaste = null
       }
     },
   }

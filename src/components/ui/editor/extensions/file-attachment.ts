@@ -109,6 +109,14 @@ declare module '@tiptap/core' {
        * Remove current file attachment
        */
       removeFileAttachment: () => ReturnType
+      /**
+       * Complete a file upload: find placeholder by uploadId, set src, clear uploading state
+       */
+      completeFileUpload: (uploadId: string, src: string) => ReturnType
+      /**
+       * Fail a file upload: find placeholder by uploadId and remove it
+       */
+      failFileUpload: (uploadId: string) => ReturnType
     }
   }
 }
@@ -165,6 +173,16 @@ export const FileAttachment = Node.create<FileAttachmentOptions>({
       },
       width: {
         default: null, // null means auto/original size
+      },
+      uploading: {
+        default: false,
+        renderHTML: () => ({}),
+        parseHTML: () => false,
+      },
+      uploadId: {
+        default: null,
+        renderHTML: () => ({}),
+        parseHTML: () => null,
       },
     }
   },
@@ -241,6 +259,53 @@ export const FileAttachment = Node.create<FileAttachmentOptions>({
         () =>
         ({ commands }) => {
           return commands.deleteSelection()
+        },
+      completeFileUpload:
+        (uploadId: string, src: string) =>
+        ({ tr, state, dispatch }) => {
+          let found = false
+          state.doc.descendants((node, pos) => {
+            if (
+              node.type.name === 'fileAttachment' &&
+              node.attrs.uploadId === uploadId
+            ) {
+              if (dispatch) {
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  src,
+                  uploading: false,
+                  uploadId: null,
+                })
+              }
+              found = true
+              return false
+            }
+          })
+          if (dispatch && found) {
+            dispatch(tr)
+          }
+          return found
+        },
+      failFileUpload:
+        (uploadId: string) =>
+        ({ tr, state, dispatch }) => {
+          let found = false
+          state.doc.descendants((node, pos) => {
+            if (
+              node.type.name === 'fileAttachment' &&
+              node.attrs.uploadId === uploadId
+            ) {
+              if (dispatch) {
+                tr.delete(pos, pos + node.nodeSize)
+              }
+              found = true
+              return false
+            }
+          })
+          if (dispatch && found) {
+            dispatch(tr)
+          }
+          return found
         },
     }
   },

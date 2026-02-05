@@ -145,6 +145,8 @@ export interface FileAttachmentAttributes {
   displayMode: FileDisplayMode
   alignment: FileAlignment
   width: number | null
+  uploading?: boolean
+  uploadId?: string | null
 }
 
 // Callout types
