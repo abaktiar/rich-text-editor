@@ -39,158 +39,127 @@
       "files": [
         {
           "path": "src/components/ui/editor/editor.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/editor.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/viewer.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/viewer.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/toolbar.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/toolbar.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/bubble-menu.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/bubble-menu.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/command-menu.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/command-menu.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/link-popover.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/link-popover.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/table-controls.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/table-controls.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/code-block.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/code-block.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/callout.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/callout.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/toggle.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/toggle.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/file-attachment.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/file-attachment.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/file-attachment-menu.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/file-attachment-menu.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/file-preview-dialog.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/file-preview-dialog.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/mention-list.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/mention-list.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/mention-component.tsx",
-          "type": "registry:component",
-          "target": "components/ui/editor/mention-component.tsx"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/commands.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/commands.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/types.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/types.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/index.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/index.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/editor.css",
-          "type": "registry:file",
-          "target": "components/ui/editor/editor.css"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/index.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/index.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/code-block.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/code-block.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/slash-commands.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/slash-commands.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/callout.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/callout.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/toggle.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/toggle.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/table.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/table.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/file-attachment.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/file-attachment.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/mention-extension.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/mention-extension.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/extensions/mention-suggestion.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/extensions/mention-suggestion.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/plugins/index.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/plugins/index.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/plugins/file-upload.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/plugins/file-upload.ts"
+          "type": "registry:component"
         },
         {
           "path": "src/components/ui/editor/plugins/mention.ts",
-          "type": "registry:lib",
-          "target": "components/ui/editor/plugins/mention.ts"
+          "type": "registry:component"
         }
       ]
     }
