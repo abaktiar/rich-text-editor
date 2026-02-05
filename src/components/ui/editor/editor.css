@@ -950,12 +950,11 @@
    Table Styles
    ====================================== */
 
-/* Table wrapper */
+/* Table wrapper (edit mode - ProseMirror creates this div via NodeView) */
 .tiptap .tableWrapper {
   margin: 1.5rem 0 2rem 0;
   overflow-x: auto;
   border-radius: 0.5rem;
-  border: 1px solid var(--border);
   background-color: var(--background);
   transition: box-shadow 0.15s ease;
 }
@@ -974,7 +973,6 @@
 /* Main table */
 .tiptap table {
   border-collapse: collapse;
-  table-layout: fixed;
   width: 100%;
   margin: 0;
 }
