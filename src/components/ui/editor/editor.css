@@ -311,9 +311,15 @@
 
 /* Highlight */
 .tiptap mark {
-  background-color: hsl(var(--primary) / 0.2);
+  background-color: hsl(50 100% 70%);
   border-radius: 0.125rem;
   padding: 0.125rem 0;
+  color: hsl(0 0% 10%);
+}
+
+.dark .tiptap mark {
+  background-color: hsl(50 100% 40%);
+  color: hsl(0 0% 95%);
 }
 
 /* Selection */
@@ -389,12 +395,15 @@
   border-radius: 0.375rem;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.1s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .command-menu-item:hover,
 .command-menu-item-selected {
-  background-color: var(--accent);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .command-menu-item-icon {
@@ -420,12 +429,22 @@
   color: var(--foreground);
 }
 
+.command-menu-item:hover .command-menu-item-name,
+.command-menu-item-selected .command-menu-item-name {
+  color: var(--primary-foreground);
+}
+
 .command-menu-item-description {
   font-size: 0.75rem;
   color: var(--muted-foreground);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.command-menu-item:hover .command-menu-item-description,
+.command-menu-item-selected .command-menu-item-description {
+  color: hsl(var(--primary-foreground) / 0.7);
 }
 
 /* ======================================
@@ -492,7 +511,7 @@
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background-color 0.1s ease;
+  transition: background-color 0.15s ease;
 }
 
 .bubble-menu-link-submit {
@@ -591,11 +610,12 @@
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background-color 0.1s ease;
+  transition: background-color 0.15s ease;
 }
 
 .code-block-language-option:hover {
-  background-color: var(--accent);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .code-block-language-option-active {
@@ -897,14 +917,17 @@
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.15s;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
   color: var(--foreground);
   font-size: 0.875rem;
 }
 
 .mention-list-item:hover,
 .mention-list-item.is-selected {
-  background-color: var(--accent);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .mention-list-loading,
@@ -1346,11 +1369,12 @@
   border-radius: 6px;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.1s ease;
+  transition: background-color 0.15s ease;
 }
 
 .table-control-dropdown-item:hover {
-  background-color: var(--accent);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .table-control-dropdown-item-danger {
@@ -1447,7 +1471,8 @@
 }
 
 .callout-type-button:hover {
-  background-color: hsl(var(--foreground) / 0.1);
+  background-color: var(--accent);
+  color: var(--foreground);
 }
 
 .callout-type-chevron {
@@ -1490,11 +1515,12 @@
   border: none;
   border-radius: 0.375rem;
   cursor: pointer;
-  transition: background-color 0.1s ease;
+  transition: background-color 0.15s ease;
 }
 
 .callout-type-option:hover {
-  background-color: var(--accent);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .callout-type-option-active {
@@ -1547,8 +1573,8 @@
   cursor: pointer;
   color: var(--muted-foreground);
   transition:
-    background-color 0.1s ease,
-    color 0.1s ease;
+    background-color 0.15s ease,
+    color 0.15s ease;
   flex-shrink: 0;
 }
 

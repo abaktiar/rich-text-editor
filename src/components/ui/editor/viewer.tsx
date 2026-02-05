@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { createExtensions } from './extensions'
 import { FileAttachment } from './extensions/file-attachment'
@@ -33,7 +33,22 @@ export function RichTextViewer({ content, className, onMentionClick, codeBlockMa
     extensions,
     content: typeof content === 'string' ? content : content,
     editable: false,
+    immediatelyRender: true,
   })
+
+  // Track whether this is the initial mount to avoid unnecessary setContent on first render
+  const isInitialMount = useRef(true)
+
+  // Sync content prop changes to the editor (useEditor only uses content on creation)
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
+    const newContent = typeof content === 'string' ? content : content
+    editor.commands.setContent(newContent ?? '')
+  }, [editor, content])
 
   if (!editor) {
     return null
